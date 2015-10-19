@@ -7,7 +7,7 @@ import javax.swing.*;
 public class BankGUI extends JFrame {
 
 	private static final long serialVersionUID = 1L;
-	private JPanel listPanel, acctTypePanel, infoPanel, buttonPanel;
+	private JPanel acctTypePanel, infoPanel, buttonPanel;
 	private JMenuBar menuBar;
 	private JMenu jmFile, jmSort;
 	private JMenuItem jmiLoadBinary, jmiSaveBinary, jmiLoadText, 
@@ -21,9 +21,9 @@ public class BankGUI extends JFrame {
 		jlblMinBalance;
 	private JTextField jtfAcctNumber, jtfAcctOwner, jtfDateOpened, 
 		jtfAcctBalance, jtfMonthlyFee, jtfInterestRate, jtfMinBalance;
-	private JList<Account> acctList;
+	private JTable acctTable;
 	private JScrollPane scrollPane;
-	private BankModel bankModel;
+	private BankModel tableModel;
 	
 	public static void main(String[] args) {
 		BankGUI frame = new BankGUI ("Bank Application");
@@ -71,13 +71,11 @@ public class BankGUI extends JFrame {
 		menuBar.add(jmFile);
 		menuBar.add(jmSort);
 		
-		// create account list panel
-		listPanel = new JPanel();
-		scrollPane = new JScrollPane();
-		//acctList = new JList<Account>(bankModel);
-		//scrollPane.add(acctList);
-		listPanel.add(scrollPane);
-		add(listPanel, BorderLayout.CENTER);
+		// create table
+		tableModel = new BankModel();
+		acctTable = new JTable(tableModel);
+		scrollPane = new JScrollPane(acctTable);
+		add(scrollPane, BorderLayout.CENTER);
 		
 		// create account type panel
 		acctTypePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
@@ -163,6 +161,7 @@ public class BankGUI extends JFrame {
 		c.gridy = 7;
 		infoPanel.add(jtfMinBalance, c);
 		c.fill = GridBagConstraints.NONE;
+		c.anchor = GridBagConstraints.CENTER;
 		c.gridx = 2;
 		c.gridy = 0;
 		c.gridheight = 8;
