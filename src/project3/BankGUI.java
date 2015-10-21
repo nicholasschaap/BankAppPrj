@@ -42,8 +42,15 @@ public class BankGUI extends JFrame {
 		super(title);
 		//setSize(400,800);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setLayout(new BorderLayout());
 		listener = new ButtonListener();
+		
+		setLayout(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
+		c.fill = GridBagConstraints.NONE;
+		c.gridx = 0;
+		c.gridy = 0;
+		c.gridwidth = 3;
+		c.gridheight = 10;
 		
 		// create menu
 		menuBar = new JMenuBar();
@@ -102,7 +109,7 @@ public class BankGUI extends JFrame {
 		tableModel = new BankModel();
 		acctTable = new JTable(tableModel);
 		scrollPane = new JScrollPane(acctTable);
-		add(scrollPane, BorderLayout.CENTER);
+		add(scrollPane, c);
 		
 		// create account type panel
 		acctTypePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
@@ -157,67 +164,67 @@ public class BankGUI extends JFrame {
 		jtfMinBalance = new JTextField();
 		jtfMinBalance.setEnabled(false); 
 		
-		infoPanel.setLayout(new GridBagLayout());
-		GridBagConstraints c = new GridBagConstraints();
+		//infoPanel.setLayout(new GridBagLayout());
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 0;
-		c.gridy = 0;
+		c.gridy = 10;
 		c.gridwidth = 2;
-		infoPanel.add(acctTypePanel, c);
+		c.gridheight = 1;
+		add(acctTypePanel, c);
 		c.fill = GridBagConstraints.NONE;
-		c.anchor = GridBagConstraints.WEST;
-		c.gridy = 1;
+		c.anchor = GridBagConstraints.EAST;
+		c.gridy = 11;
 		c.gridwidth = 1;
-		infoPanel.add(jlblAcctNumber, c); 
-		c.gridy = 2;
-		infoPanel.add(jlblAcctOwner, c);
-		c.gridy = 3;
-		infoPanel.add(jlblDateOpened, c);
-		c.gridy = 4;
-		infoPanel.add(jlblAcctBalance, c);
-		c.gridy = 5;
-		infoPanel.add(jlblMonthlyFee, c);
-		c.gridy = 6;
-		infoPanel.add(jlblInterestRate, c);
-		c.gridy = 7;
-		infoPanel.add(jlblMinBalance, c);
+		add(jlblAcctNumber, c); 
+		c.gridy = 12;
+		add(jlblAcctOwner, c);
+		c.gridy = 13;
+		add(jlblDateOpened, c);
+		c.gridy = 14;
+		add(jlblAcctBalance, c);
+		c.gridy = 15;
+		add(jlblMonthlyFee, c);
+		c.gridy = 16;
+		add(jlblInterestRate, c);
+		c.gridy = 17;
+		add(jlblMinBalance, c);
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 1;
-		c.gridy = 1;
-		infoPanel.add(jtfAcctNumber, c); 
-		c.gridy = 2;
-		infoPanel.add(jtfAcctOwner, c); 
-		c.gridy = 3;
-		infoPanel.add(jtfDateOpened, c); 
-		c.gridy = 4;
-		infoPanel.add(jtfAcctBalance, c); 
-		c.gridy = 5;
-		infoPanel.add(jtfMonthlyFee, c); 
-		c.gridy = 6;
-		infoPanel.add(jtfInterestRate, c); 
-		c.gridy = 7;
-		infoPanel.add(jtfMinBalance, c);
+		c.gridy = 11;
+		add(jtfAcctNumber, c); 
+		c.gridy = 12;
+		add(jtfAcctOwner, c); 
+		c.gridy = 13;
+		add(jtfDateOpened, c); 
+		c.gridy = 14;
+		add(jtfAcctBalance, c); 
+		c.gridy = 15;
+		add(jtfMonthlyFee, c); 
+		c.gridy = 16;
+		add(jtfInterestRate, c); 
+		c.gridy = 17;
+		add(jtfMinBalance, c);
 		c.fill = GridBagConstraints.NONE;
 		c.anchor = GridBagConstraints.CENTER;
 		c.gridx = 2;
-		c.gridy = 0;
+		c.gridy = 10;
 		c.gridheight = 8;
-		infoPanel.add(buttonPanel, c);
-		add(infoPanel, BorderLayout.SOUTH);
+		add(buttonPanel, c);
+		//add(infoPanel, BorderLayout.SOUTH);
 		setDefaultLookAndFeelDecorated(true);
 	}
 	
-	private boolean checkingIsSelected() {
-		if(jrbChecking.isSelected())
-			return true;
-		return false;
-	}
-	
-	private boolean savingsIsSelected() {
-		if(jrbSavings.isSelected())
-			return true;
-		return false;
-	}
+//	private boolean checkingIsSelected() {
+//		if(jrbChecking.isSelected())
+//			return true;
+//		return false;
+//	}
+//	
+//	private boolean savingsIsSelected() {
+//		if(jrbSavings.isSelected())
+//			return true;
+//		return false;
+//	}
 
 	private class ButtonListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
@@ -264,6 +271,10 @@ public class BankGUI extends JFrame {
 					SavingsAccount savings = new SavingsAccount(account,owner,dateOpened,balance,minBalance,interestRate);
 					tableModel.add(savings);
 				}
+			}
+			
+			if(e.getSource() == jbtDelete) {
+				
 			}
 		}
 	}
