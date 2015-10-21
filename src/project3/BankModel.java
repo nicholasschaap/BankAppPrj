@@ -7,8 +7,8 @@ public class BankModel extends AbstractTableModel {
 	
 	private static final long serialVersionUID = 1L;
 	private ArrayList<Account> accounts;
-	private static final String[] columnNames = {"Number","Date Opened",
-			"Account Owner","Current Balance","Monthly Fee",
+	private static final String[] columnNames = {"Number","Account Owner",
+			"Date Opened","Current Balance","Monthly Fee",
 			"Interest Rate","Minimum Balance"};
 
 	public BankModel() {
@@ -42,12 +42,12 @@ public class BankModel extends AbstractTableModel {
 			return acct.getDateOpened();
 		case 3:
 			return acct.getBalance();
-		case 4:
-			return ((CheckingAccount) acct).getMonthlyFee();
-		case 5:
-			return ((SavingsAccount) acct).getInterestRate();
-		case 6:
-			return ((SavingsAccount) acct).getMinBalance();
+//		case 4:
+//			return ((CheckingAccount) acct).getMonthlyFee();
+//		case 5:
+//			return ((SavingsAccount) acct).getInterestRate();
+//		case 6:
+//			return ((SavingsAccount) acct).getMinBalance();
 		default:
 			return null;
 		}
@@ -63,7 +63,7 @@ public class BankModel extends AbstractTableModel {
 		fireTableRowsDeleted(0, getRowCount() - 1);
 	}
 	
-	public void update() {
+	public void update(Account a) {
 		fireTableRowsUpdated(0, getRowCount() - 1);
 	}
 

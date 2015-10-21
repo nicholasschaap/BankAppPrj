@@ -3,6 +3,7 @@ package project3;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.GregorianCalendar;
 
 import javax.swing.*;
 
@@ -205,20 +206,65 @@ public class BankGUI extends JFrame {
 		add(infoPanel, BorderLayout.SOUTH);
 		setDefaultLookAndFeelDecorated(true);
 	}
+	
+	private boolean checkingIsSelected() {
+		if(jrbChecking.isSelected())
+			return true;
+		return false;
+	}
+	
+	private boolean savingsIsSelected() {
+		if(jrbSavings.isSelected())
+			return true;
+		return false;
+	}
 
 	private class ButtonListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			if(e.getSource() == jrbChecking){ 
-					jtfInterestRate.setEnabled(false);
-					jtfMinBalance.setEnabled(false);
-					jtfMonthlyFee.setEnabled(true);
+				jtfInterestRate.setEnabled(false);
+				jtfMinBalance.setEnabled(false);
+				jtfMonthlyFee.setEnabled(true);
 			}
-			 
-			 if(e.getSource() == jrbSavings){
-					 jtfInterestRate.setEnabled(true);
-					 jtfMinBalance.setEnabled(true);
-					 jtfMonthlyFee.setEnabled(false);
-			 }
+
+			if(e.getSource() == jrbSavings){
+				jtfInterestRate.setEnabled(true);
+				jtfMinBalance.setEnabled(true);
+				jtfMonthlyFee.setEnabled(false);
+			}
+			
+			if(e.getSource() == jbtAdd) {
+				if(jrbChecking.isSelected()) {
+					int account = Integer.parseInt(jtfAcctNumber.getText());
+					String owner = jtfAcctOwner.getText();
+					String[] str = (jtfDateOpened.getText()).split("/");
+					int year = Integer.parseInt(str[2]);
+					int month = Integer.parseInt(str[0]);
+					int day = Integer.parseInt(str[1]);
+					GregorianCalendar dateOpened = new GregorianCalendar(year,month,day);
+					double balance = Double.valueOf(jtfAcctBalance.getText());
+					double monthlyFee = Double.valueOf(jtfMonthlyFee.getText());
+				
+					CheckingAccount checking = new CheckingAccount(account,owner,dateOpened,balance,monthlyFee);
+					tableModel.add(checking);
+				}
+				
+				if(jrbSavings.isSelected()) {
+					int account = Integer.parseInt(jtfAcctNumber.getText());
+					String owner = jtfAcctOwner.getText();
+					String[] str = (jtfDateOpened.getText()).split("/");
+					int year = Integer.parseInt(str[2]);
+					int month = Integer.parseInt(str[0]);
+					int day = Integer.parseInt(str[1]);
+					GregorianCalendar dateOpened = new GregorianCalendar(year,month,day);
+					double balance = Double.valueOf(jtfAcctBalance.getText());
+					double minBalance = Double.valueOf(jtfMinBalance.getText());
+					double interestRate = Double.valueOf(jtfInterestRate.getText());
+				
+					SavingsAccount savings = new SavingsAccount(account,owner,dateOpened,balance,minBalance,interestRate);
+					tableModel.add(savings);
+				}
+			}
 		}
 	}
 }
