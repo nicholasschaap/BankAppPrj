@@ -1,6 +1,8 @@
 package project3;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.*;
 
@@ -24,6 +26,7 @@ public class BankGUI extends JFrame {
 	private JTable acctTable;
 	private JScrollPane scrollPane;
 	private BankModel tableModel;
+	private ButtonListener listener;
 	
 	public static void main(String[] args) {
 		BankGUI frame = new BankGUI ("Bank Application");
@@ -39,11 +42,15 @@ public class BankGUI extends JFrame {
 		//setSize(400,800);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setLayout(new BorderLayout());
+		listener = new ButtonListener();
 		
 		// create menu
 		menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
 		jmFile = new JMenu("File");
+		jmSort = new JMenu("Sort");
+		
+		//instantiate menu items
 		jmiLoadBinary = new JMenuItem("Load From Binary...");
 		jmiSaveBinary = new JMenuItem("Save As Binary...");
 		jmiLoadText = new JMenuItem("Load From Text...");
@@ -51,6 +58,26 @@ public class BankGUI extends JFrame {
 		jmiLoadXML = new JMenuItem("Load From XML...");
 		jmiSaveXML = new JMenuItem("Save As XML...");
 		jmiQuit = new JMenuItem("Quit");
+		
+		jmiSortByAcctNumber = new JMenuItem("By Account Number");
+		jmiSortByAcctOwner = new JMenuItem("By Account Owner");
+		jmiSortByDateOpened = new JMenuItem("By Date Opened");
+		
+		// add action listeners to menu items
+		jmFile.addActionListener(listener);
+		jmiLoadBinary.addActionListener(listener);
+		jmiSaveBinary.addActionListener(listener);
+		jmiLoadText.addActionListener(listener);
+		jmiSaveText.addActionListener(listener);
+		jmiLoadXML.addActionListener(listener);
+		jmiSaveXML.addActionListener(listener);
+		jmiQuit.addActionListener(listener);
+		
+		jmiSortByAcctNumber.addActionListener(listener);
+		jmiSortByAcctOwner.addActionListener(listener);
+		jmiSortByDateOpened.addActionListener(listener);
+		
+		//add menu items to correct menu lists
 		jmFile.add(jmiLoadBinary);
 		jmFile.add(jmiSaveBinary);
 		jmFile.addSeparator();
@@ -61,13 +88,12 @@ public class BankGUI extends JFrame {
 		jmFile.add(jmiSaveXML);
 		jmFile.addSeparator();
 		jmFile.add(jmiQuit);
-		jmSort = new JMenu("Sort");
-		jmiSortByAcctNumber = new JMenuItem("By Account Number");
-		jmiSortByAcctOwner = new JMenuItem("By Account Owner");
-		jmiSortByDateOpened = new JMenuItem("By Date Opened");
+		
 		jmSort.add(jmiSortByAcctNumber);
 		jmSort.add(jmiSortByAcctOwner);
 		jmSort.add(jmiSortByDateOpened);
+		
+		//add menus to menu bar
 		menuBar.add(jmFile);
 		menuBar.add(jmSort);
 		
@@ -81,6 +107,10 @@ public class BankGUI extends JFrame {
 		acctTypePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
 		jrbChecking = new JRadioButton("Checking", true);
 		jrbSavings = new JRadioButton("Savings");
+		
+		jrbChecking.addActionListener(listener);
+		jrbSavings.addActionListener(listener);
+		
 		acctType = new ButtonGroup();
 		acctType.add(jrbChecking);
 		acctType.add(jrbSavings);
@@ -96,6 +126,12 @@ public class BankGUI extends JFrame {
 		jbtDelete = new JButton("Delete");
 		jbtUpdate = new JButton("Update");
 		jbtClear = new JButton("Clear");
+		
+		jbtAdd.addActionListener(listener);
+		jbtDelete.addActionListener(listener);
+		jbtUpdate.addActionListener(listener);
+		jbtClear.addActionListener(listener);
+		
 		buttonPanel.add(jbtAdd);
 		buttonPanel.add(jbtDelete);
 		buttonPanel.add(jbtUpdate);
@@ -168,5 +204,21 @@ public class BankGUI extends JFrame {
 		infoPanel.add(buttonPanel, c);
 		add(infoPanel, BorderLayout.SOUTH);
 		setDefaultLookAndFeelDecorated(true);
+	}
+
+	private class ButtonListener implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
+			if(e.getSource() == jrbChecking){ 
+					jtfInterestRate.setEnabled(false);
+					jtfMinBalance.setEnabled(false);
+					jtfMonthlyFee.setEnabled(true);
+			}
+			 
+			 if(e.getSource() == jrbSavings){
+					 jtfInterestRate.setEnabled(true);
+					 jtfMinBalance.setEnabled(true);
+					 jtfMonthlyFee.setEnabled(false);
+			 }
+		}
 	}
 }
