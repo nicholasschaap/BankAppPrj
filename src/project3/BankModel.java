@@ -1,6 +1,8 @@
 package project3;
 
 import java.util.ArrayList;
+import java.util.GregorianCalendar;
+
 import javax.swing.table.AbstractTableModel;
 
 public class BankModel extends AbstractTableModel {
@@ -53,18 +55,50 @@ public class BankModel extends AbstractTableModel {
 		}
 	}
 	
+	public void setValueAt(Object value, int row, int col) {
+		Account acct = accounts.get(row);
+		switch(col) {
+		case 0:
+			acct.setNumber(Integer.parseInt((String)value));
+			break;
+		case 1:
+			acct.setOwner((String) value);
+			break;
+		case 2:
+			acct.setDateOpened((GregorianCalendar) value);
+			break;
+		case 3:
+			acct.setBalance(Double.valueOf((String)value));
+			break;
+//		case 4:
+//			((CheckingAccount)acct).setMonthlyFee((Double) value);
+//			break;
+//		case 5:
+//			((SavingsAccount) acct).setInterestRate((Double) value);
+//			break;
+//		case 6:
+//			((SavingsAccount) acct).setMinBalance((Double) value);
+//			break;
+		}
+		
+		fireTableCellUpdated(row,col);
+		
+	}
+	
 	public void add(Account a) {
 		accounts.add(a);
 		fireTableRowsInserted(0, getRowCount() - 1);
 	}
 	
-	public void delete(Account a) {
-		accounts.remove(a);
-		fireTableRowsDeleted(0, getRowCount() - 1);
+	public void delete(int selectedAcct) {
+		accounts.remove(selectedAcct);
+		fireTableRowsDeleted(selectedAcct, selectedAcct);
 	}
 	
-	public void update(Account a) {
-		fireTableRowsUpdated(0, getRowCount() - 1);
+	public void update(int selectedAcct) {
+		
+		
+		fireTableRowsUpdated(selectedAcct, selectedAcct);
 	}
 
 

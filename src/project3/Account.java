@@ -43,7 +43,6 @@ public abstract class Account implements Serializable {
 		return result;
 	}
 
-
 	public int getNumber() {
 		return number;
 	}

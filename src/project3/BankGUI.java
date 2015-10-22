@@ -1,12 +1,11 @@
 package project3;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.GregorianCalendar;
-
+import java.awt.event.*;
+import java.util.*;
+import javax.swing.event.*;
 import javax.swing.*;
-import javax.swing.table.TableCellRenderer;
+import javax.swing.table.*;
 
 public class BankGUI extends JFrame {
 
@@ -216,17 +215,17 @@ public class BankGUI extends JFrame {
 //		setDefaultLookAndFeelDecorated(true);
 	}
 	
-//	private boolean checkingIsSelected() {
-//		if(jrbChecking.isSelected())
-//			return true;
-//		return false;
-//	}
-//	
-//	private boolean savingsIsSelected() {
-//		if(jrbSavings.isSelected())
-//			return true;
-//		return false;
-//	}
+	private boolean checkingIsSelected() {
+		if(jrbChecking.isSelected())
+			return true;
+		return false;
+	}
+	
+	private boolean savingsIsSelected() {
+		if(jrbSavings.isSelected())
+			return true;
+		return false;
+	}
 
 	private void addChecking() {
 		int account = Integer.parseInt(jtfAcctNumber.getText());
@@ -259,6 +258,21 @@ public class BankGUI extends JFrame {
 		tableModel.add(savings);
 	}
 	
+	private GregorianCalendar getDate(String str) {
+		String[] date = str.split("/");
+		
+		int year = Integer.parseInt(date[2]);
+		int month = Integer.parseInt(date[0]);
+		int day = Integer.parseInt(date[1]);
+		GregorianCalendar dateOpened = new GregorianCalendar(year,month,day);
+		
+		return dateOpened;
+	}
+	
+	private int rowIndex() {
+		return acctTable.getSelectedRow();
+	}
+	
 	private class ButtonListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			if(e.getSource() == jrbChecking){ 
@@ -283,9 +297,40 @@ public class BankGUI extends JFrame {
 				}
 			}
 			
+			if(e.getSource() == jbtUpdate) {
+				
+				if(jtfAcctNumber.getText() != "") {
+						tableModel.setValueAt(jtfAcctNumber.getText(), rowIndex(), 0);
+				}
+				if(jtfAcctOwner.getText() != "") {
+						tableModel.setValueAt(jtfAcctOwner.getText(), rowIndex(), 1);
+				}
+				if(jtfDateOpened.getText() != "") {
+						tableModel.setValueAt(getDate(jtfDateOpened.getText()), rowIndex(), 2);
+				}
+				if(jtfAcctBalance.getText() != "") {
+						tableModel.setValueAt(jtfAcctBalance.getText(), rowIndex(), 3);
+				}
+					
+				if(savingsIsSelected()) {
+					if(jtfMinBalance.getText() != "") {
+						tableModel.setValueAt(jtfMinBalance.getText(), rowIndex(), 5);
+					}
+					if(jtfInterestRate.getText() != "") {
+						tableModel.setValueAt(jtfInterestRate.getText(), rowIndex(), 6);
+					}
+				}
+					
+				if(checkingIsSelected()) {
+					if(jtfMonthlyFee.getText() != "") {
+						tableModel.setValueAt(jtfMonthlyFee.getText(), rowIndex(), 4);
+					}
+				}
+				
+			}
+			
 			if(e.getSource() == jbtDelete) {
-				int rowIndex = acctTable.getSelectedRow();
-				// tableModel.delete();
+				tableModel.delete(rowIndex());
 			}
 		}
 	}
