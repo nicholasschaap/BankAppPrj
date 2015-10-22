@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 import java.util.GregorianCalendar;
 
 import javax.swing.*;
+import javax.swing.table.TableCellRenderer;
 
 public class BankGUI extends JFrame {
 
@@ -33,7 +34,8 @@ public class BankGUI extends JFrame {
 		BankGUI frame = new BankGUI ("Bank Application");
 	    frame.pack();
 	    frame.setLocationRelativeTo(null);
-	    //frame.setResizable(false);
+//	    frame.setResizable(false);
+	    setDefaultLookAndFeelDecorated(true);
 	    frame.setVisible(true);
 	}
 	
@@ -211,7 +213,7 @@ public class BankGUI extends JFrame {
 		c.gridheight = 8;
 		add(buttonPanel, c);
 		//add(infoPanel, BorderLayout.SOUTH);
-		setDefaultLookAndFeelDecorated(true);
+//		setDefaultLookAndFeelDecorated(true);
 	}
 	
 //	private boolean checkingIsSelected() {
@@ -226,6 +228,37 @@ public class BankGUI extends JFrame {
 //		return false;
 //	}
 
+	private void addChecking() {
+		int account = Integer.parseInt(jtfAcctNumber.getText());
+		String owner = jtfAcctOwner.getText();
+		String[] str = (jtfDateOpened.getText()).split("/");
+		int year = Integer.parseInt(str[2]);
+		int month = Integer.parseInt(str[0]);
+		int day = Integer.parseInt(str[1]);
+		GregorianCalendar dateOpened = new GregorianCalendar(year,month,day);
+		double balance = Double.valueOf(jtfAcctBalance.getText());
+		double monthlyFee = Double.valueOf(jtfMonthlyFee.getText());
+	
+		CheckingAccount checking = new CheckingAccount(account,owner,dateOpened,balance,monthlyFee);
+		tableModel.add(checking);
+	}
+	
+	private void addSavings() {
+		int account = Integer.parseInt(jtfAcctNumber.getText());
+		String owner = jtfAcctOwner.getText();
+		String[] str = (jtfDateOpened.getText()).split("/");
+		int year = Integer.parseInt(str[2]);
+		int month = Integer.parseInt(str[0]);
+		int day = Integer.parseInt(str[1]);
+		GregorianCalendar dateOpened = new GregorianCalendar(year,month,day);
+		double balance = Double.valueOf(jtfAcctBalance.getText());
+		double minBalance = Double.valueOf(jtfMinBalance.getText());
+		double interestRate = Double.valueOf(jtfInterestRate.getText());
+	
+		SavingsAccount savings = new SavingsAccount(account,owner,dateOpened,balance,minBalance,interestRate);
+		tableModel.add(savings);
+	}
+	
 	private class ButtonListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			if(e.getSource() == jrbChecking){ 
@@ -242,39 +275,17 @@ public class BankGUI extends JFrame {
 			
 			if(e.getSource() == jbtAdd) {
 				if(jrbChecking.isSelected()) {
-					int account = Integer.parseInt(jtfAcctNumber.getText());
-					String owner = jtfAcctOwner.getText();
-					String[] str = (jtfDateOpened.getText()).split("/");
-					int year = Integer.parseInt(str[2]);
-					int month = Integer.parseInt(str[0]);
-					int day = Integer.parseInt(str[1]);
-					GregorianCalendar dateOpened = new GregorianCalendar(year,month,day);
-					double balance = Double.valueOf(jtfAcctBalance.getText());
-					double monthlyFee = Double.valueOf(jtfMonthlyFee.getText());
-				
-					CheckingAccount checking = new CheckingAccount(account,owner,dateOpened,balance,monthlyFee);
-					tableModel.add(checking);
+					addChecking();
 				}
 				
 				if(jrbSavings.isSelected()) {
-					int account = Integer.parseInt(jtfAcctNumber.getText());
-					String owner = jtfAcctOwner.getText();
-					String[] str = (jtfDateOpened.getText()).split("/");
-					int year = Integer.parseInt(str[2]);
-					int month = Integer.parseInt(str[0]);
-					int day = Integer.parseInt(str[1]);
-					GregorianCalendar dateOpened = new GregorianCalendar(year,month,day);
-					double balance = Double.valueOf(jtfAcctBalance.getText());
-					double minBalance = Double.valueOf(jtfMinBalance.getText());
-					double interestRate = Double.valueOf(jtfInterestRate.getText());
-				
-					SavingsAccount savings = new SavingsAccount(account,owner,dateOpened,balance,minBalance,interestRate);
-					tableModel.add(savings);
+					addSavings();
 				}
 			}
 			
 			if(e.getSource() == jbtDelete) {
-				
+				int rowIndex = acctTable.getSelectedRow();
+				// tableModel.delete();
 			}
 		}
 	}
