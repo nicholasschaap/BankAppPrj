@@ -28,6 +28,7 @@ public class BankGUI extends JFrame {
 	private JScrollPane scrollPane;
 	private BankModel tableModel;
 	private ButtonListener listener;
+	private ListSelectionModel listSelectionModel;
 	
 	public static void main(String[] args) {
 		BankGUI frame = new BankGUI ("Bank Application");
@@ -116,6 +117,16 @@ public class BankGUI extends JFrame {
 		acctTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		add(scrollPane, c);
 		//add(header, c);
+		
+		TableColumn column = null;
+		for (int i = 0; i < tableModel.getColumnCount(); i++) {
+		    column = acctTable.getColumnModel().getColumn(i);
+		        column.setPreferredWidth(100); //third column is bigger
+		}
+		
+		listSelectionModel = acctTable.getSelectionModel();
+		listSelectionModel.addListSelectionListener(
+				new SharedListSelectionHandler());
 		
 		// create account type panel
 		acctTypePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
@@ -221,14 +232,16 @@ public class BankGUI extends JFrame {
 	}
 	
 	private boolean checkingIsSelected() {
-		if(jrbChecking.isSelected())
+		if(jrbChecking.isSelected()) {
 			return true;
+		}
 		return false;
 	}
 	
 	private boolean savingsIsSelected() {
-		if(jrbSavings.isSelected())
+		if(jrbSavings.isSelected()) {
 			return true;
+		}
 		return false;
 	}
 
@@ -281,6 +294,8 @@ public class BankGUI extends JFrame {
 	private class ButtonListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			if(e.getSource() == jrbChecking){ 
+				jtfMinBalance.setText("");
+				jtfInterestRate.setText("");
 				jtfInterestRate.setEnabled(false);
 				jtfMinBalance.setEnabled(false);
 				jtfMonthlyFee.setEnabled(true);
@@ -289,6 +304,7 @@ public class BankGUI extends JFrame {
 			if(e.getSource() == jrbSavings){
 				jtfInterestRate.setEnabled(true);
 				jtfMinBalance.setEnabled(true);
+				jtfMonthlyFee.setText("");
 				jtfMonthlyFee.setEnabled(false);
 			}
 			
@@ -319,10 +335,10 @@ public class BankGUI extends JFrame {
 					
 				if(savingsIsSelected()) {
 					if(jtfMinBalance.getText() != "") {
-						tableModel.setValueAt(jtfMinBalance.getText(), rowIndex(), 5);
+						tableModel.setValueAt(jtfMinBalance.getText(), rowIndex(), 6);
 					}
 					if(jtfInterestRate.getText() != "") {
-						tableModel.setValueAt(jtfInterestRate.getText(), rowIndex(), 6);
+						tableModel.setValueAt(jtfInterestRate.getText(), rowIndex(), 5);
 					}
 				}
 					
@@ -345,6 +361,46 @@ public class BankGUI extends JFrame {
 						JOptionPane.YES_OPTION)
 					System.exit(0);
 			}
+//			if(e.getSource() == rowIndex()) {
+//				
+//			}
 		}
+	}
+	
+	class SharedListSelectionHandler implements ListSelectionListener {
+	    public void valueChanged(ListSelectionEvent e) {
+	    	ListSelectionModel lsm = (ListSelectionModel)e.getSource();
+	    	
+	    	if (lsm.isSelectionEmpty()) {
+	    		JOptionPane error = new JOptionPane("No accounts!");
+            } else {
+                // Find out which indexes are selected.
+                int minIndex = lsm.getMinSelectionIndex();
+                int maxIndex = lsm.getMaxSelectionIndex();
+                for (int i = minIndex; i <= maxIndex; i++) {
+                    if (lsm.isSelectedIndex(i)) {
+                    	jtfAcctNumber.setText(""+ acctTable.getValueAt(i,0));
+                    	jtfAcctOwner.setText("" + acctTable.getValueAt(i, 1));
+                    	jtfDateOpened.setText("" + acctTable.getValueAt(i, 2));
+                		jtfAcctBalance.setText("" + acctTable.getValueAt(i, 3));
+                    	if (acctTable.getValueAt(i,4) == null) {
+                    		jtfMonthlyFee.setText("");
+                    	} else{
+                    		jtfMonthlyFee.setText("" + acctTable.getValueAt(i, 4));
+                    	}
+                    	if (acctTable.getValueAt(i,5) == null) {
+                    		jtfInterestRate.setText("");
+                    	} else{
+                    		jtfInterestRate.setText("" + acctTable.getValueAt(i, 5));
+                    	}
+                    	if (acctTable.getValueAt(i,6) == null) {
+                    		jtfMinBalance.setText("");
+                    	} else{
+                    		jtfMinBalance.setText("" + acctTable.getValueAt(i, 6));
+                    	}
+                    }
+                }
+            }
+	    }
 	}
 }
