@@ -45,14 +45,17 @@ public class BankModel extends AbstractTableModel {
 		case 3:
 			return acct.getBalance();
 		case 4:
-			if(acct instanceof CheckingAccount)
+			if(acct instanceof CheckingAccount) {
 				return ((CheckingAccount) acct).getMonthlyFee();
+			}
 		case 5:
-			if(acct instanceof SavingsAccount)
+			if(acct instanceof SavingsAccount) {
 				return ((SavingsAccount) acct).getInterestRate();
+			}
 		case 6:
-			if(acct instanceof SavingsAccount)
+			if(acct instanceof SavingsAccount) {
 				return ((SavingsAccount) acct).getMinBalance();
+			}
 		default:
 			return null;
 		}
@@ -73,15 +76,21 @@ public class BankModel extends AbstractTableModel {
 		case 3:
 			acct.setBalance(Double.valueOf((String)value));
 			break;
-//		case 4:
-//			((CheckingAccount)acct).setMonthlyFee((Double) value);
-//			break;
-//		case 5:
-//			((SavingsAccount) acct).setInterestRate((Double) value);
-//			break;
-//		case 6:
-//			((SavingsAccount) acct).setMinBalance((Double) value);
-//			break;
+		case 4:
+			if(acct instanceof CheckingAccount) {
+				((CheckingAccount)acct).setMonthlyFee(Double.valueOf((String)value));
+			}
+			break;
+		case 5:
+			if(acct instanceof SavingsAccount) {
+				((SavingsAccount) acct).setInterestRate(Double.valueOf((String)value));
+			}
+			break;
+		case 6:
+			if(acct instanceof SavingsAccount) {
+				((SavingsAccount) acct).setMinBalance(Double.valueOf((String)value));
+			}
+			break;
 		}
 		
 		fireTableCellUpdated(row,col);
@@ -90,7 +99,7 @@ public class BankModel extends AbstractTableModel {
 	
 	public void add(Account a) {
 		accounts.add(a);
-		fireTableRowsInserted(0, getRowCount() - 1);
+		fireTableRowsInserted(accounts.indexOf(a),accounts.indexOf(a));
 	}
 	
 	public void delete(int selectedAcct) {
