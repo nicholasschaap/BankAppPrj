@@ -332,6 +332,14 @@ public class BankGUI extends JFrame {
 			if(e.getSource() == jbtDelete) {
 				tableModel.delete(rowIndex());
 			}
+			
+			if(e.getSource() == jmiQuit) {
+				if (JOptionPane.showConfirmDialog(null, 
+						"Exit Bank Application?", "Confirm Exit",
+						JOptionPane.YES_NO_OPTION) == 
+						JOptionPane.YES_OPTION)
+					System.exit(0);
+			}
 		}
 	}
 }
