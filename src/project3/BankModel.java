@@ -100,11 +100,30 @@ public class BankModel extends AbstractTableModel {
 	
 	public void update(int selectedAcct) {
 		
-		
 		fireTableRowsUpdated(selectedAcct, selectedAcct);
 	}
-
-
 	
-	
+//	public ArrayList<Account> loadSerializable() {
+//		
+//	}
+//	
+//	public void saveSerializable() {
+//		
+//	}
+//	
+//	public ArrayList<Account> loadText() {
+//		
+//	}
+//	
+//	public void saveText() {
+//		
+//	}
+//	
+//	public ArrayList<Account> loadXML() {
+//		
+//	}
+//	
+//	public void saveXML() {
+//		
+//	}
 }
