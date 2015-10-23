@@ -2,6 +2,7 @@ package project3;
 
 import java.io.Serializable;
 import java.util.GregorianCalendar;
+import com.toedter.calendar.JCalendar;
 
 public class CheckingAccount extends Account {
 	
@@ -9,7 +10,7 @@ public class CheckingAccount extends Account {
 	private double monthlyFee;
 	
 	public CheckingAccount(int number, String owner,
-			GregorianCalendar dateOpened, double balance,
+			JCalendar dateOpened, double balance,
 			double monthlyFee) {
 		
 		super(number, owner, dateOpened, balance);

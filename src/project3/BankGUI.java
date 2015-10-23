@@ -6,6 +6,7 @@ import java.util.*;
 import javax.swing.event.*;
 import javax.swing.*;
 import javax.swing.table.*;
+import com.toedter.calendar.*;
 
 public class BankGUI extends JFrame {
 
@@ -22,8 +23,9 @@ public class BankGUI extends JFrame {
 	private JLabel jlblAcctNumber, jlblAcctOwner, jlblDateOpened, 
 		jlblAcctBalance, jlblMonthlyFee, jlblInterestRate, 
 		jlblMinBalance;
-	private JTextField jtfAcctNumber, jtfAcctOwner, jtfDateOpened, 
-		jtfAcctBalance, jtfMonthlyFee, jtfInterestRate, jtfMinBalance;
+	private JTextField jtfAcctNumber, jtfAcctOwner, jtfAcctBalance, 
+		jtfMonthlyFee, jtfInterestRate, jtfMinBalance;
+	private JDateChooser jdcDateOpened;
 	private JTable acctTable;
 	private JScrollPane scrollPane;
 	private BankModel tableModel;
@@ -111,7 +113,7 @@ public class BankGUI extends JFrame {
 		tableModel = new BankModel();
 		acctTable = new JTable(tableModel);;
 		acctTable.setMinimumSize(new Dimension(600,200));
-		JTableHeader header = acctTable.getTableHeader();	
+		// JTableHeader header = acctTable.getTableHeader();	
 		scrollPane = new JScrollPane(acctTable);
 		scrollPane.setMinimumSize(new Dimension(600, 23));
 		acctTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
@@ -169,7 +171,8 @@ public class BankGUI extends JFrame {
 		jlblAcctOwner = new JLabel("Account Owner: ");
 		jtfAcctOwner = new JTextField();
 		jlblDateOpened = new JLabel("Date Opened: ");
-		jtfDateOpened = new JTextField();
+		jdcDateOpened = new JDateChooser();
+		jdcDateOpened.setLocale(Locale.US);
 		jlblAcctBalance = new JLabel("Account Balance: ");
 		jtfAcctBalance = new JTextField();
 		jlblMonthlyFee = new JLabel("Monthly Fee: ");
@@ -212,7 +215,7 @@ public class BankGUI extends JFrame {
 		c.gridy = 12;
 		add(jtfAcctOwner, c); 
 		c.gridy = 13;
-		add(jtfDateOpened, c); 
+		add(jdcDateOpened, c); 
 		c.gridy = 14;
 		add(jtfAcctBalance, c); 
 		c.gridy = 15;
@@ -248,11 +251,12 @@ public class BankGUI extends JFrame {
 	private void addChecking() {
 		int account = Integer.parseInt(jtfAcctNumber.getText());
 		String owner = jtfAcctOwner.getText();
-		String[] str = (jtfDateOpened.getText()).split("/");
-		int year = Integer.parseInt(str[2]);
-		int month = Integer.parseInt(str[0]);
-		int day = Integer.parseInt(str[1]);
-		GregorianCalendar dateOpened = new GregorianCalendar(year,month,day);
+		
+		Date date = jdcDateOpened.getDate();
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		JCalendar dateOpened = new JCalendar(jdcDateOpened.getDate());
+		
 		double balance = Double.valueOf(jtfAcctBalance.getText());
 		double monthlyFee = Double.valueOf(jtfMonthlyFee.getText());
 	
@@ -263,11 +267,12 @@ public class BankGUI extends JFrame {
 	private void addSavings() {
 		int account = Integer.parseInt(jtfAcctNumber.getText());
 		String owner = jtfAcctOwner.getText();
-		String[] str = (jtfDateOpened.getText()).split("/");
-		int year = Integer.parseInt(str[2]);
-		int month = Integer.parseInt(str[0]);
-		int day = Integer.parseInt(str[1]);
-		GregorianCalendar dateOpened = new GregorianCalendar(year,month,day);
+	
+		Date date = jdcDateOpened.getDate();
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		JCalendar dateOpened = new JCalendar(jdcDateOpened.getDate());
+		
 		double balance = Double.valueOf(jtfAcctBalance.getText());
 		double minBalance = Double.valueOf(jtfMinBalance.getText());
 		double interestRate = Double.valueOf(jtfInterestRate.getText());
@@ -326,8 +331,8 @@ public class BankGUI extends JFrame {
 				if(jtfAcctOwner.getText() != "") {
 						tableModel.setValueAt(jtfAcctOwner.getText(), rowIndex(), 1);
 				}
-				if(jtfDateOpened.getText() != "") {
-						tableModel.setValueAt(getDate(jtfDateOpened.getText()), rowIndex(), 2);
+				if(jdcDateOpened.toString() != "") {
+						tableModel.setValueAt(getDate(jdcDateOpened.toString()), rowIndex(), 2);
 				}
 				if(jtfAcctBalance.getText() != "") {
 						tableModel.setValueAt(jtfAcctBalance.getText(), rowIndex(), 3);
@@ -347,7 +352,16 @@ public class BankGUI extends JFrame {
 						tableModel.setValueAt(jtfMonthlyFee.getText(), rowIndex(), 4);
 					}
 				}
-				
+			}
+			
+			if(e.getSource() == jbtClear) {
+				jtfAcctNumber.setText("");
+				jtfAcctOwner.setText("");
+				//jdcDateOpened.setDate();
+				jtfAcctBalance.setText("");
+				jtfMonthlyFee.setText("");
+				jtfInterestRate.setText("");
+				jtfMinBalance.setText("");
 			}
 			
 			if(e.getSource() == jbtDelete) {

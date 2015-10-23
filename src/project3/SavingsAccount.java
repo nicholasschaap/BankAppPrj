@@ -1,6 +1,7 @@
 package project3;
 
 import java.util.GregorianCalendar;
+import com.toedter.calendar.JCalendar;
 
 public class SavingsAccount extends Account {
 	
@@ -9,7 +10,7 @@ public class SavingsAccount extends Account {
 	private double interestRate;
 	
 	public SavingsAccount(int number, String owner,
-			GregorianCalendar dateOpened, double balance, 
+			JCalendar dateOpened, double balance, 
 			double minBalance, double interestRate) {
 		
 		super(number, owner, dateOpened, balance);

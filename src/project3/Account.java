@@ -2,17 +2,18 @@ package project3;
 
 import java.io.Serializable;
 import java.util.GregorianCalendar;
+import com.toedter.calendar.JCalendar;
 
 public abstract class Account implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	protected int number;
 	protected String owner;
-	protected GregorianCalendar dateOpened;
+	protected JCalendar dateOpened;
 	protected double balance;
 	
 	public Account(int number, String owner, 
-			GregorianCalendar dateOpened, double balance) {
+			JCalendar dateOpened, double balance) {
 
 		this.number = number;
 		this.owner = owner;
@@ -59,11 +60,11 @@ public abstract class Account implements Serializable {
 		this.owner = owner;
 	}
 
-	public GregorianCalendar getDateOpened() {
+	public JCalendar getDateOpened() {
 		return dateOpened;
 	}
 
-	public void setDateOpened(GregorianCalendar dateOpened) {
+	public void setDateOpened(JCalendar dateOpened) {
 		this.dateOpened = dateOpened;
 	}
 

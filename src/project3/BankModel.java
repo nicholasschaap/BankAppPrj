@@ -2,8 +2,8 @@ package project3;
 
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
-
 import javax.swing.table.AbstractTableModel;
+import com.toedter.calendar.JCalendar;
 
 public class BankModel extends AbstractTableModel {
 	
@@ -77,7 +77,7 @@ public class BankModel extends AbstractTableModel {
 			acct.setOwner((String) value);
 			break;
 		case 2:
-			acct.setDateOpened((GregorianCalendar) value);
+			acct.setDateOpened((JCalendar) value);
 			break;
 		case 3:
 			acct.setBalance(Double.valueOf((String)value));
