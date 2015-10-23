@@ -41,7 +41,7 @@ public class BankGUI extends JFrame {
 	// constructor
 	public BankGUI(String title) {
 		super(title);
-		//setSize(400,800);
+		//setSize(1000,800);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		listener = new ButtonListener();
 		
@@ -108,9 +108,14 @@ public class BankGUI extends JFrame {
 		
 		// create table
 		tableModel = new BankModel();
-		acctTable = new JTable(tableModel);
+		acctTable = new JTable(tableModel);;
+		acctTable.setMinimumSize(new Dimension(600,200));
+		JTableHeader header = acctTable.getTableHeader();	
 		scrollPane = new JScrollPane(acctTable);
+		scrollPane.setMinimumSize(new Dimension(600, 23));
+		acctTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		add(scrollPane, c);
+		//add(header, c);
 		
 		// create account type panel
 		acctTypePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
