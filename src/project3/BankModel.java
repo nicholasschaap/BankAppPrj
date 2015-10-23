@@ -44,12 +44,15 @@ public class BankModel extends AbstractTableModel {
 			return acct.getDateOpened();
 		case 3:
 			return acct.getBalance();
-//		case 4:
-//			return ((CheckingAccount) acct).getMonthlyFee();
-//		case 5:
-//			return ((SavingsAccount) acct).getInterestRate();
-//		case 6:
-//			return ((SavingsAccount) acct).getMinBalance();
+		case 4:
+			if(acct instanceof CheckingAccount)
+				return ((CheckingAccount) acct).getMonthlyFee();
+		case 5:
+			if(acct instanceof SavingsAccount)
+				return ((SavingsAccount) acct).getInterestRate();
+		case 6:
+			if(acct instanceof SavingsAccount)
+				return ((SavingsAccount) acct).getMinBalance();
 		default:
 			return null;
 		}
