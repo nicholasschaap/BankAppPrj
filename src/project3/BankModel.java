@@ -47,14 +47,20 @@ public class BankModel extends AbstractTableModel {
 		case 4:
 			if(acct instanceof CheckingAccount) {
 				return ((CheckingAccount) acct).getMonthlyFee();
+			} else {
+				return "";
 			}
 		case 5:
 			if(acct instanceof SavingsAccount) {
 				return ((SavingsAccount) acct).getInterestRate();
+			} else {
+				return "";
 			}
 		case 6:
 			if(acct instanceof SavingsAccount) {
 				return ((SavingsAccount) acct).getMinBalance();
+			} else {
+				return "";
 			}
 		default:
 			return null;
