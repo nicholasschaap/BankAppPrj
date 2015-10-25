@@ -151,35 +151,37 @@ public class BankModel extends AbstractTableModel implements Serializable{
 	}
 	
 	public BankModel loadSerializable() {
+		
 		BankModel bankModel;
+		ObjectInputStream ois;
 		
 		try {
-			FileInputStream file = new FileInputStream("C:\\Users\\nscha_000\\workspace\\BankAppPrj\\tableData");
-			ObjectInputStream input = new ObjectInputStream(file);
-			bankModel = (BankModel) input.readObject();
+			FileInputStream file = new FileInputStream("data.bin");
+			ois = new ObjectInputStream(file);
+			bankModel = (BankModel) ois.readObject();
+			ois.close();
 			fireTableDataChanged();
-			input.close();
+			
 			return bankModel;
+			
 		} catch(Exception e) {
 			e.printStackTrace();
+			
 			return null;
 		}
 	}
 	
 	public void saveSerializable() {
+		
 		ObjectOutputStream oos = null;
+		
 		try {
-			oos = new ObjectOutputStream(new FileOutputStream("tableData"));
+			oos = new ObjectOutputStream(new FileOutputStream("data.bin"));
 			oos.writeObject(this);
+			oos.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		} 
- 
-		try {
-			oos.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 	}
 	
 //	public BankModel loadText() {
