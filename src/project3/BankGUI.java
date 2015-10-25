@@ -387,9 +387,14 @@ public class BankGUI extends JFrame {
 						JOptionPane.YES_OPTION)
 					System.exit(0);
 			}
-//			if(e.getSource() == rowIndex()) {
-//				
-//			}
+
+			if(e.getSource() == jmiSaveBinary) {
+				tableModel.saveSerializable();
+			}
+			
+			if(e.getSource() == jmiLoadBinary) {
+				acctTable.setModel(tableModel.loadSerializable());
+			}
 		}
 	}
 	

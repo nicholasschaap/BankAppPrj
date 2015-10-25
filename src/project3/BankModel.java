@@ -1,11 +1,19 @@
 package project3;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
+
 import javax.swing.table.AbstractTableModel;
+
 import com.toedter.calendar.JCalendar;
 
-public class BankModel extends AbstractTableModel {
+public class BankModel extends AbstractTableModel implements Serializable{
 	
 	private static final long serialVersionUID = 1L;
 	private ArrayList<Account> accounts;
@@ -142,15 +150,39 @@ public class BankModel extends AbstractTableModel {
 		fireTableRowsUpdated(selectedAcct, selectedAcct);
 	}
 	
-//	public ArrayList<Account> loadSerializable() {
-//		
-//	}
-//	
-//	public void saveSerializable() {
-//		
-//	}
-//	
-//	public ArrayList<Account> loadText() {
+	public BankModel loadSerializable() {
+		BankModel bankModel;
+		
+		try {
+			FileInputStream file = new FileInputStream("C:\\Users\\nscha_000\\workspace\\BankAppPrj\\tableData");
+			ObjectInputStream input = new ObjectInputStream(file);
+			bankModel = (BankModel) input.readObject();
+			fireTableDataChanged();
+			input.close();
+			return bankModel;
+		} catch(Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	public void saveSerializable() {
+		ObjectOutputStream oos = null;
+		try {
+			oos = new ObjectOutputStream(new FileOutputStream("tableData"));
+			oos.writeObject(this);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} 
+ 
+		try {
+			oos.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+//	public BankModel loadText() {
 //		
 //	}
 //	
@@ -158,7 +190,7 @@ public class BankModel extends AbstractTableModel {
 //		
 //	}
 //	
-//	public ArrayList<Account> loadXML() {
+//	public BankModel loadXML() {
 //		
 //	}
 //	
