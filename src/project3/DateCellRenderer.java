@@ -1,6 +1,7 @@
 package project3;
 
 import java.awt.Component;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -30,13 +31,14 @@ public class DateCellRenderer extends DefaultTableCellRenderer {
 
         return this;
     }
-//	
-//	public void setValue(Object value) {
-//		Object result = value;
-//	    if ((value != null) && (value instanceof GregorianCalendar)) {
-//	      GregorianCalendar cal = (GregorianCalendar) value;
-//	      result = cal.getTime();
-//	    } 
-//	    super.setValue(result);
-//	}
+	
+	public void setValue(Object value) {
+		Object result = value;
+	    if ((value != null) && (value instanceof GregorianCalendar)) {
+	      GregorianCalendar cal = (GregorianCalendar) value;
+	      result = cal.getTime();
+	      sdf.format(result);
+	    } 
+	    super.setValue(result);
+	}
 }
