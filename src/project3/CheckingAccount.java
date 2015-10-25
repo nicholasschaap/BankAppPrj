@@ -10,7 +10,7 @@ public class CheckingAccount extends Account {
 	private double monthlyFee;
 	
 	public CheckingAccount(int number, String owner,
-			JCalendar dateOpened, double balance,
+			GregorianCalendar dateOpened, double balance,
 			double monthlyFee) {
 		
 		super(number, owner, dateOpened, balance);

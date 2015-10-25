@@ -3,9 +3,11 @@ package project3;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
+
 import javax.swing.event.*;
 import javax.swing.*;
 import javax.swing.table.*;
+
 import com.toedter.calendar.*;
 
 public class BankGUI extends JFrame {
@@ -34,9 +36,9 @@ public class BankGUI extends JFrame {
 	
 	public static void main(String[] args) {
 		BankGUI frame = new BankGUI ("Bank Application");
-	    frame.pack();
+	    //frame.pack();
 	    frame.setLocationRelativeTo(null);
-//	    frame.setResizable(false);
+	    //frame.setResizable(false);
 	    setDefaultLookAndFeelDecorated(true);
 	    frame.setVisible(true);
 	}
@@ -44,7 +46,7 @@ public class BankGUI extends JFrame {
 	// constructor
 	public BankGUI(String title) {
 		super(title);
-		//setSize(1000,800);
+		setSize(1000,800);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		listener = new ButtonListener();
 		
@@ -111,19 +113,27 @@ public class BankGUI extends JFrame {
 		
 		// create table
 		tableModel = new BankModel();
-		acctTable = new JTable(tableModel);;
-		acctTable.setMinimumSize(new Dimension(600,200));
-		// JTableHeader header = acctTable.getTableHeader();	
+		acctTable = new JTable(tableModel);
+		DateCellRenderer dcr = new DateCellRenderer();
+		acctTable.setDefaultRenderer(GregorianCalendar.class,dcr);
+        acctTable.getColumnModel().getColumn(2).setCellRenderer(dcr);
+		acctTable.setMinimumSize(new Dimension(600,200));	
 		scrollPane = new JScrollPane(acctTable);
 		scrollPane.setMinimumSize(new Dimension(600, 23));
 		acctTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		add(scrollPane, c);
-		//add(header, c);
 		
 		TableColumn column = null;
 		for (int i = 0; i < tableModel.getColumnCount(); i++) {
 		    column = acctTable.getColumnModel().getColumn(i);
-		        column.setPreferredWidth(100); //third column is bigger
+		    	if(i == 1 || i == 3)
+		    		column.setPreferredWidth(100);
+		    	else if(i == 2)
+		    		column.setPreferredWidth(90);
+		    	else if(i == 6)
+		    		column.setPreferredWidth(110);
+		    	else
+		    		column.setPreferredWidth(80);
 		}
 		
 		listSelectionModel = acctTable.getSelectionModel();
@@ -255,7 +265,8 @@ public class BankGUI extends JFrame {
 		Date date = jdcDateOpened.getDate();
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(date);
-		JCalendar dateOpened = new JCalendar(jdcDateOpened.getDate());
+		GregorianCalendar dateOpened = new GregorianCalendar(Calendar.YEAR, Calendar.MONTH, Calendar.DAY_OF_MONTH);
+		//JCalendar dateOpened = new JCalendar(jdcDateOpened.getDate());
 		
 		double balance = Double.valueOf(jtfAcctBalance.getText());
 		double monthlyFee = Double.valueOf(jtfMonthlyFee.getText());
@@ -271,7 +282,8 @@ public class BankGUI extends JFrame {
 		Date date = jdcDateOpened.getDate();
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(date);
-		JCalendar dateOpened = new JCalendar(jdcDateOpened.getDate());
+		GregorianCalendar dateOpened = new GregorianCalendar(calendar.YEAR, calendar.MONTH, calendar.DAY_OF_MONTH);
+		//JCalendar dateOpened = new JCalendar(jdcDateOpened.getDate());
 		
 		double balance = Double.valueOf(jtfAcctBalance.getText());
 		double minBalance = Double.valueOf(jtfMinBalance.getText());
@@ -395,7 +407,7 @@ public class BankGUI extends JFrame {
                     if (lsm.isSelectedIndex(i)) {
                     	jtfAcctNumber.setText(""+ acctTable.getValueAt(i,0));
                     	jtfAcctOwner.setText("" + acctTable.getValueAt(i, 1));
-                    	jtfDateOpened.setText("" + acctTable.getValueAt(i, 2));
+                    	//jtfDateOpened.setText("" + acctTable.getValueAt(i, 2));
                 		jtfAcctBalance.setText("" + acctTable.getValueAt(i, 3));
                     	if (acctTable.getValueAt(i,4) == null) {
                     		jtfMonthlyFee.setText("");

@@ -9,11 +9,12 @@ public abstract class Account implements Serializable {
 	private static final long serialVersionUID = 1L;
 	protected int number;
 	protected String owner;
-	protected JCalendar dateOpened;
+	//protected JCalendar dateOpened;
+	protected GregorianCalendar dateOpened;
 	protected double balance;
 	
 	public Account(int number, String owner, 
-			JCalendar dateOpened, double balance) {
+			GregorianCalendar dateOpened, double balance) {
 
 		this.number = number;
 		this.owner = owner;
@@ -60,11 +61,11 @@ public abstract class Account implements Serializable {
 		this.owner = owner;
 	}
 
-	public JCalendar getDateOpened() {
+	public GregorianCalendar getDateOpened() {
 		return dateOpened;
 	}
 
-	public void setDateOpened(JCalendar dateOpened) {
+	public void setDateOpened(GregorianCalendar dateOpened) {
 		this.dateOpened = dateOpened;
 	}
 

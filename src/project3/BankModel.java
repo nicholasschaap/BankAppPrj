@@ -23,6 +23,28 @@ public class BankModel extends AbstractTableModel {
 	}
 	
 	@Override
+	public Class<?> getColumnClass(int col) {
+		switch(col) {
+		case 0:
+			return String.class;
+		case 1:
+			return String.class;
+		case 2:
+			return GregorianCalendar.class;
+		case 3:
+			return double.class;
+		case 4:
+			return double.class;
+		case 5:
+			return double.class;
+		case 6:
+			return double.class;
+		default:
+			throw new IndexOutOfBoundsException();
+		}
+	}
+	
+	@Override
 	public int getColumnCount() {
 		return columnNames.length; // 7
 	}
@@ -63,7 +85,7 @@ public class BankModel extends AbstractTableModel {
 				return "";
 			}
 		default:
-			return null;
+			throw new IndexOutOfBoundsException();
 		}
 	}
 	
@@ -77,7 +99,7 @@ public class BankModel extends AbstractTableModel {
 			acct.setOwner((String) value);
 			break;
 		case 2:
-			acct.setDateOpened((JCalendar) value);
+			acct.setDateOpened((GregorianCalendar) value);
 			break;
 		case 3:
 			acct.setBalance(Double.valueOf((String)value));
@@ -97,10 +119,12 @@ public class BankModel extends AbstractTableModel {
 				((SavingsAccount) acct).setMinBalance(Double.valueOf((String)value));
 			}
 			break;
+		default:
+			throw new IndexOutOfBoundsException();
 		}
-		
+
 		fireTableCellUpdated(row,col);
-		
+
 	}
 	
 	public void add(Account a) {

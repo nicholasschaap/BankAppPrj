@@ -10,7 +10,7 @@ public class SavingsAccount extends Account {
 	private double interestRate;
 	
 	public SavingsAccount(int number, String owner,
-			JCalendar dateOpened, double balance, 
+			GregorianCalendar dateOpened, double balance, 
 			double minBalance, double interestRate) {
 		
 		super(number, owner, dateOpened, balance);
