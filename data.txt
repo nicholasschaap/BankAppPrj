@@ -1,2 +1,0 @@
-CheckingAccount,10084320,Nicholas Schaap,0001,03,05,1640.0,2.0
-CheckingAccount,10084321,Rick Neilson,0001,03,05,3050.0,1.0

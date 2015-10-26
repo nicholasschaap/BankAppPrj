@@ -38,8 +38,7 @@ public class SavingsAccount extends Account {
 	@Override
 	public String toString() {
 		String result = super.toString();
-		result = "SavingsAccount," + result + "," + minBalance + "," + 
-				interestRate;
+		result += "," + minBalance + "," + interestRate;
 		
 		return result;
 	}

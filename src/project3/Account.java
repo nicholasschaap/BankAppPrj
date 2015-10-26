@@ -1,10 +1,7 @@
 package project3;
 
 import java.io.Serializable;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.GregorianCalendar;
-
 import com.toedter.calendar.JCalendar;
 
 public abstract class Account implements Serializable {
@@ -41,10 +38,8 @@ public abstract class Account implements Serializable {
 	
 	@Override
 	public String toString() {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy,MM,dd");
-		Date date = dateOpened.getTime();
-		String result = number + "," + owner + "," + sdf.format(date) + 
-				"," + balance;
+		String result = number + "," + owner + "," + dateOpened + "," + 
+				balance;
 //		String result = String.format("%d,%s,%tD,%f", number,owner,
 //				dateOpened,balance);
 		return result;
