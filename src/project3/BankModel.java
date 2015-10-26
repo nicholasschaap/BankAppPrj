@@ -1,13 +1,19 @@
 package project3;
 
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.PrintWriter;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
+import java.util.Scanner;
 
 import javax.swing.table.AbstractTableModel;
 
@@ -101,7 +107,7 @@ public class BankModel extends AbstractTableModel implements Serializable{
 		Account acct = accounts.get(row);
 		switch(col) {
 		case 0:
-			acct.setNumber(Integer.parseInt((String)value));
+			acct.setNumber((int)value);
 			break;
 		case 1:
 			acct.setOwner((String) value);
@@ -183,20 +189,85 @@ public class BankModel extends AbstractTableModel implements Serializable{
 			e.printStackTrace();
 		} 
 	}
-	
-//	public BankModel loadText() {
-//		
-//	}
-//	
-//	public void saveText() {
-//		
-//	}
-//	
-//	public BankModel loadXML() {
-//		
-//	}
-//	
-//	public void saveXML() {
-//		
-//	}
+
+	public BankModel loadText() {
+
+		BankModel bankModel;
+
+		try {
+			Scanner fileReader = new Scanner(new File("data.txt"));
+			fileReader.useDelimiter(",");
+
+			bankModel = new BankModel();
+
+			while(fileReader.hasNextLine() && fileReader.nextLine() != "") {
+				if(fileReader.nextLine() == "CheckingAccount") {
+					String type = fileReader.nextLine();
+					int number = Integer.parseInt(fileReader.next());
+					String owner = fileReader.next();
+					int year = Integer.parseInt(fileReader.next());
+					int month = Integer.parseInt(fileReader.next());
+					int day = Integer.parseInt(fileReader.next());
+					GregorianCalendar dateOpened = new GregorianCalendar(year, month, day);
+					double balance = Double.parseDouble(fileReader.next());
+					double monthlyFee = Double.parseDouble(fileReader.next());
+					CheckingAccount checking = new CheckingAccount(number, owner, dateOpened, balance, monthlyFee);
+					bankModel.add(checking);
+				} else if(fileReader.hasNextLine()) {
+					String type = fileReader.nextLine();
+					int number = Integer.parseInt(fileReader.next());
+					String owner = fileReader.next();
+					int year = Integer.parseInt(fileReader.next());
+					int month = Integer.parseInt(fileReader.next());
+					int day = Integer.parseInt(fileReader.next());
+					GregorianCalendar dateOpened = new GregorianCalendar(year, month, day);
+					double balance = Double.parseDouble(fileReader.next());
+					double interestRate = Double.parseDouble(fileReader.next());
+					double minBalance = Double.parseDouble(fileReader.next());
+					SavingsAccount savings = new SavingsAccount(number, owner, dateOpened, balance, interestRate, minBalance);
+					bankModel.add(savings);
+				}
+			}
+			fileReader.close();
+			fireTableDataChanged();
+			return bankModel;
+		}
+
+		// could not find file
+		catch(FileNotFoundException error) {
+			System.out.println("File not found.");
+			return null;
+		}
+
+		// problem reading the file
+		catch(IOException error) {
+			System.out.println("Oops!  Something went wrong.");
+			return null;
+		}
+	}
+
+	public void saveText() {
+		PrintWriter out = null;
+
+		try {
+			out = new PrintWriter(new BufferedWriter(
+					new FileWriter("data.txt")));
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		for(int i = 0; i < accounts.size(); i++) {
+			out.println(accounts.get(i).toString());
+		}
+		out.close();
+	}
+	//	
+	//	public BankModel loadXML() {
+	//		
+	//	}
+	//	
+	//	public void saveXML() {
+	//		
+	//	}
 }

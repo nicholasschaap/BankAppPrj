@@ -36,7 +36,7 @@ public class CheckingAccount extends Account {
 	@Override
 	public String toString() {
 		String result = super.toString();
-		result += "," + monthlyFee;
+		result = "CheckingAccount," + result + "," + monthlyFee;
 		
 		return result;
 	}

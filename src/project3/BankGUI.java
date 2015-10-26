@@ -343,8 +343,12 @@ public class BankGUI extends JFrame {
 				if(jtfAcctOwner.getText() != "") {
 						tableModel.setValueAt(jtfAcctOwner.getText(), rowIndex(), 1);
 				}
-				if(jdcDateOpened.toString() != "") {
-						tableModel.setValueAt(getDate(jdcDateOpened.toString()), rowIndex(), 2);
+				if(jdcDateOpened != null) {
+					Date date = jdcDateOpened.getDate();
+					Calendar calendar = Calendar.getInstance();
+					calendar.setTime(date);
+					GregorianCalendar dateOpened = new GregorianCalendar(calendar.YEAR, calendar.MONTH, calendar.DAY_OF_MONTH);
+					tableModel.setValueAt(dateOpened, rowIndex(), 2);
 				}
 				if(jtfAcctBalance.getText() != "") {
 						tableModel.setValueAt(jtfAcctBalance.getText(), rowIndex(), 3);
@@ -369,7 +373,7 @@ public class BankGUI extends JFrame {
 			if(e.getSource() == jbtClear) {
 				jtfAcctNumber.setText("");
 				jtfAcctOwner.setText("");
-				//jdcDateOpened.setDate();
+				jdcDateOpened.setCalendar(null);
 				jtfAcctBalance.setText("");
 				jtfMonthlyFee.setText("");
 				jtfInterestRate.setText("");
@@ -393,7 +397,17 @@ public class BankGUI extends JFrame {
 			}
 			
 			if(e.getSource() == jmiLoadBinary) {
-				acctTable.setModel(tableModel.loadSerializable());
+				tableModel = tableModel.loadSerializable();
+				acctTable.setModel(tableModel);
+			}
+			
+			if(e.getSource() == jmiSaveText) {
+				tableModel.saveText();
+			}
+			
+			if(e.getSource() == jmiLoadText) {
+				tableModel.loadText();
+				acctTable.setModel(tableModel);
 			}
 		}
 	}
@@ -412,7 +426,7 @@ public class BankGUI extends JFrame {
                     if (lsm.isSelectedIndex(i)) {
                     	jtfAcctNumber.setText(""+ acctTable.getValueAt(i,0));
                     	jtfAcctOwner.setText("" + acctTable.getValueAt(i, 1));
-                    	//jtfDateOpened.setText("" + acctTable.getValueAt(i, 2));
+                    	jdcDateOpened.setCalendar((GregorianCalendar)acctTable.getValueAt(i, 2));
                 		jtfAcctBalance.setText("" + acctTable.getValueAt(i, 3));
                     	if (acctTable.getValueAt(i,4) == null) {
                     		jtfMonthlyFee.setText("");
