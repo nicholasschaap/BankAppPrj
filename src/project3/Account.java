@@ -2,11 +2,13 @@ package project3;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.GregorianCalendar;
+
 import com.toedter.calendar.JCalendar;
 
-public abstract class Account implements Serializable {
+public abstract class Account implements Serializable,Comparator<Account> {
 	
 	private static final long serialVersionUID = 1L;
 	protected int number;
