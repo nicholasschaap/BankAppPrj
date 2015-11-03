@@ -11,9 +11,26 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.io.Serializable;
+import java.io.StringWriter;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.Scanner;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.parsers.*;
+import javax.xml.transform.*;
+import javax.xml.transform.dom.*;
+import javax.xml.transform.stream.*;
+import org.xml.sax.*;
+import org.xml.sax.helpers.DefaultHandler;
+import org.w3c.dom.*;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import javax.swing.table.AbstractTableModel;
 
@@ -36,27 +53,27 @@ public class BankModel extends AbstractTableModel implements Serializable{
 		return columnNames[col];
 	}
 	
-	@Override
-	public Class<?> getColumnClass(int col) {
-		switch(col) {
-		case 0:
-			return String.class;
-		case 1:
-			return String.class;
-		case 2:
-			return GregorianCalendar.class;
-		case 3:
-			return double.class;
-		case 4:
-			return double.class;
-		case 5:
-			return double.class;
-		case 6:
-			return double.class;
-		default:
-			throw new IndexOutOfBoundsException();
-		}
-	}
+//	@Override
+//	public Class<?> getColumnClass(int col) {
+//		switch(col) {
+//		case 0:
+//			return String.class;
+//		case 1:
+//			return String.class;
+//		case 2:
+//			return GregorianCalendar.class;
+//		case 3:
+//			return double.class;
+//		case 4:
+//			return double.class;
+//		case 5:
+//			return double.class;
+//		case 6:
+//			return double.class;
+//		default:
+//			throw new IndexOutOfBoundsException();
+//		}
+//	}
 	
 	@Override
 	public int getColumnCount() {
@@ -77,7 +94,7 @@ public class BankModel extends AbstractTableModel implements Serializable{
 		case 1:
 			return acct.getOwner();
 		case 2:
-			return acct.getDateOpened();
+			return (DateFormat.getDateInstance(DateFormat.SHORT).format(acct.getDateOpened().getTime()));
 		case 3:
 			return acct.getBalance();
 		case 4:
@@ -262,12 +279,216 @@ public class BankModel extends AbstractTableModel implements Serializable{
 		}
 		out.close();
 	}
-	//	
-	//	public BankModel loadXML() {
-	//		
-	//	}
-	//	
-	//	public void saveXML() {
-	//		
-	//	}
+	
+	public void saveXML() {
+
+		try {
+
+			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+
+			// root elements
+			Document doc = docBuilder.newDocument();
+			Element rootElement = doc.createElement("Account");
+			doc.appendChild(rootElement);
+			Element account;
+			
+			for(int i = 0; i < accounts.size(); i++) {
+				if(isChecking(i)) {
+					// type account elements
+					account = doc.createElement("Checking");
+					rootElement.appendChild(account);
+				} else {
+					// type account elements
+					account = doc.createElement("Savings");
+					rootElement.appendChild(account);
+				}
+//				// set attribute to staff element
+//				Attr attr = doc.createAttribute("id");
+//				attr.setValue("1");
+//				staff.setAttributeNode(attr);
+//
+//				// shorten way
+//				// staff.setAttribute("id", "1");
+
+
+				// account number elements
+				Element accountNumber = doc.createElement("AccountNumber");
+				accountNumber.appendChild(doc.createTextNode("" + getValueAt(i,0)));
+				account.appendChild(accountNumber);
+
+				// account name elements
+				Element accountName = doc.createElement("AccountOwner");
+				accountName.appendChild(doc.createTextNode("" + getValueAt(i,1)));
+				account.appendChild(accountName);
+
+//				// date opened elements
+				Element dateOpened = doc.createElement("DateOpened");
+				dateOpened.appendChild(doc.createTextNode("" + getValueAt(i,2)));
+				account.appendChild(dateOpened);
+
+				// current balance elements
+				Element currentBal = doc.createElement("CurrentBalance");
+				currentBal.appendChild(doc.createTextNode("" + getValueAt(i,3)));
+				account.appendChild(currentBal);
+				
+				if(isChecking(i)) {
+					// monthly fee elements
+					Element monthlyFee = doc.createElement("MonthlyFee");
+					monthlyFee.appendChild(doc.createTextNode("" + getValueAt(i,4)));
+					account.appendChild(monthlyFee);
+				} else {
+					// interest rate elements
+					Element intRate = doc.createElement("InterstRate");
+					intRate.appendChild(doc.createTextNode("" + getValueAt(i,5)));
+					account.appendChild(intRate);
+					
+					// minimum balance elements
+					Element minBal = doc.createElement("MinimumBalance");
+					minBal.appendChild(doc.createTextNode("" + getValueAt(i,6)));
+					account.appendChild(minBal);
+				}
+			}
+
+			// write the content into xml file
+			TransformerFactory transformerFactory = TransformerFactory.newInstance();
+			Transformer transformer = transformerFactory.newTransformer();
+			DOMSource source = new DOMSource(doc);
+			StreamResult result = new StreamResult(new File("C:\\file.xml"));
+
+//			// Output to console for testing
+//			StreamResult result = new StreamResult(System.out);
+			
+			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+			transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+			transformer.transform(source, result);
+
+			System.out.println("File saved!");
+
+		  } catch (ParserConfigurationException pce) {
+			pce.printStackTrace();
+		  } catch (TransformerException tfe) {
+			tfe.printStackTrace();
+		  }
+		        
+	}
+	
+	public void loadXML() {
+		try {
+
+			SAXParserFactory factory = SAXParserFactory.newInstance();
+			SAXParser saxParser = factory.newSAXParser();
+
+			DefaultHandler handler = new DefaultHandler() {
+
+			boolean bActNum = false;
+			boolean bActOwner = false;
+			boolean bDateOpened = false;
+			boolean bCurrentBal = false;
+			boolean bMonthlyFee = false;
+			boolean bIntRate = false;
+			boolean bMinBal = false;
+
+			public void startElement(String uri, String localName,String qName, 
+					Attributes attributes) throws SAXException {
+
+				System.out.println("Start Element :" + qName);
+
+				if (qName.equalsIgnoreCase("AccountNumber")) {
+					bActNum = true;
+				}
+
+				if (qName.equalsIgnoreCase("AccountOwner")) {
+					bActOwner = true;
+				}
+
+				if (qName.equalsIgnoreCase("DateOpened")) {
+					bDateOpened = true;
+				}
+
+				if (qName.equalsIgnoreCase("CurrentBalance")) {
+					bCurrentBal = true;
+				}
+
+				if (qName.equalsIgnoreCase("MonthlyFee")) {
+					bMonthlyFee = true;
+				}
+
+				if (qName.equalsIgnoreCase("InterestRate")) {
+					bIntRate = true;
+				}
+
+				if (qName.equalsIgnoreCase("MinimumBalance")) {
+					bMinBal = true;
+				}
+
+			}
+
+			public void endElement(String uri, String localName,
+					String qName) throws SAXException {
+
+				System.out.println("End Element :" + qName);
+
+			}
+			
+			public void characters(char ch[], int start, int length) throws SAXException {
+				
+				if (bActNum) {
+					System.out.println("First Name : " + new String(ch, start, length));
+					bActNum = false;
+				}
+
+				if (bActOwner) {
+					System.out.println("Last Name : " + new String(ch, start, length));
+					bActOwner = false;
+				}
+
+				if (bDateOpened) {
+					System.out.println("Nick Name : " + new String(ch, start, length));
+					bDateOpened = false;
+				}
+
+				if (bCurrentBal) {
+					System.out.println("Salary : " + new String(ch, start, length));
+					bCurrentBal = false;
+				}
+				
+				if (bMonthlyFee) {
+					System.out.println("Salary : " + new String(ch, start, length));
+					bMonthlyFee = false;
+				}
+
+				if (bIntRate) {
+					System.out.println("Salary : " + new String(ch, start, length));
+					bIntRate = false;
+				}
+				
+				if (bMinBal) {
+					System.out.println("Salary : " + new String(ch, start, length));
+					bMinBal = false;
+				}
+
+
+			}
+
+			};
+
+			saxParser.parse("c:\\file.xml", handler);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+	
+	private boolean isChecking(int row) {
+		boolean checking = false;
+		Account acct = accounts.get(row);
+		
+		if (acct instanceof CheckingAccount) {
+			checking = true;
+		}
+		
+		return checking;
+	}
 }
