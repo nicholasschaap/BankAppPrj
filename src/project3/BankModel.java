@@ -11,7 +11,9 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.io.Serializable;
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.GregorianCalendar;
 import java.util.Scanner;
 
@@ -36,27 +38,27 @@ public class BankModel extends AbstractTableModel implements Serializable{
 		return columnNames[col];
 	}
 	
-	@Override
-	public Class<?> getColumnClass(int col) {
-		switch(col) {
-		case 0:
-			return String.class;
-		case 1:
-			return String.class;
-		case 2:
-			return GregorianCalendar.class;
-		case 3:
-			return double.class;
-		case 4:
-			return double.class;
-		case 5:
-			return double.class;
-		case 6:
-			return double.class;
-		default:
-			throw new IndexOutOfBoundsException();
-		}
-	}
+//	@Override
+//	public Class<?> getColumnClass(int col) {
+//		switch(col) {
+//		case 0:
+//			return String.class;
+//		case 1:
+//			return String.class;
+//		case 2:
+//			return GregorianCalendar.class;
+//		case 3:
+//			return double.class;
+//		case 4:
+//			return double.class;
+//		case 5:
+//			return double.class;
+//		case 6:
+//			return double.class;
+//		default:
+//			throw new IndexOutOfBoundsException();
+//		}
+//	}
 	
 	@Override
 	public int getColumnCount() {
@@ -77,7 +79,7 @@ public class BankModel extends AbstractTableModel implements Serializable{
 		case 1:
 			return acct.getOwner();
 		case 2:
-			return acct.getDateOpened();
+			return (DateFormat.getDateInstance(DateFormat.SHORT).format(acct.getDateOpened().getTime()));
 		case 3:
 			return acct.getBalance();
 		case 4:
@@ -196,34 +198,33 @@ public class BankModel extends AbstractTableModel implements Serializable{
 
 		try {
 			Scanner fileReader = new Scanner(new File("data.txt"));
-			fileReader.useDelimiter(",");
 
 			bankModel = new BankModel();
 
 			while(fileReader.hasNextLine() && fileReader.nextLine() != "") {
-				if(fileReader.nextLine() == "CheckingAccount") {
-					String type = fileReader.nextLine();
-					int number = Integer.parseInt(fileReader.next());
-					String owner = fileReader.next();
-					int year = Integer.parseInt(fileReader.next());
-					int month = Integer.parseInt(fileReader.next());
-					int day = Integer.parseInt(fileReader.next());
+				String temp = fileReader.nextLine();
+				String[] str = temp.split(",");
+				if(str.length == 7) {
+					int number = Integer.parseInt(str[0]);
+					String owner = str[1];
+					int year = Integer.parseInt(str[2]);
+					int month = Integer.parseInt(str[3]);
+					int day = Integer.parseInt(str[4]);
 					GregorianCalendar dateOpened = new GregorianCalendar(year, month, day);
-					double balance = Double.parseDouble(fileReader.next());
-					double monthlyFee = Double.parseDouble(fileReader.next());
+					double balance = Double.parseDouble(str[5]);
+					double monthlyFee = Double.parseDouble(str[6]);
 					CheckingAccount checking = new CheckingAccount(number, owner, dateOpened, balance, monthlyFee);
 					bankModel.add(checking);
-				} else if(fileReader.hasNextLine()) {
-					String type = fileReader.nextLine();
-					int number = Integer.parseInt(fileReader.next());
-					String owner = fileReader.next();
-					int year = Integer.parseInt(fileReader.next());
-					int month = Integer.parseInt(fileReader.next());
-					int day = Integer.parseInt(fileReader.next());
+				} else if(str.length == 8) {
+					int number = Integer.parseInt(str[0]);
+					String owner = str[1];
+					int year = Integer.parseInt(str[2]);
+					int month = Integer.parseInt(str[3]);
+					int day = Integer.parseInt(str[4]);
 					GregorianCalendar dateOpened = new GregorianCalendar(year, month, day);
-					double balance = Double.parseDouble(fileReader.next());
-					double interestRate = Double.parseDouble(fileReader.next());
-					double minBalance = Double.parseDouble(fileReader.next());
+					double balance = Double.parseDouble(str[5]);
+					double interestRate = Double.parseDouble(str[6]);
+					double minBalance = Double.parseDouble(str[7]);
 					SavingsAccount savings = new SavingsAccount(number, owner, dateOpened, balance, interestRate, minBalance);
 					bankModel.add(savings);
 				}
@@ -270,4 +271,23 @@ public class BankModel extends AbstractTableModel implements Serializable{
 	//	public void saveXML() {
 	//		
 	//	}
+//	public void sortAccountNumber() {
+//		Collections.sort(accounts,new Account() {
+//
+//			@Override
+//			public int compare(Account arg0, Account arg1) {
+//				// TODO Auto-generated method stub
+//				return 0;
+//			}
+//			
+//		});
+//	}
+	
+	public void sortAccountName() {
+		
+	}
+	
+	public void sortDateOpened() {
+		
+	}
 }
