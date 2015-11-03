@@ -263,11 +263,11 @@ public class BankGUI extends JFrame {
 		String owner = jtfAcctOwner.getText();
 		
 		Date date = jdcDateOpened.getDate();
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(date);
-		GregorianCalendar dateOpened = new GregorianCalendar(Calendar.YEAR, Calendar.MONTH, Calendar.DAY_OF_MONTH);
+//		Calendar calendar = Calendar.getInstance();
+//		calendar.setTime(date);
+		GregorianCalendar dateOpened = new GregorianCalendar();
 		//JCalendar dateOpened = new JCalendar(jdcDateOpened.getDate());
-		
+		dateOpened.setTime(date);
 		double balance = Double.valueOf(jtfAcctBalance.getText());
 		double monthlyFee = Double.valueOf(jtfMonthlyFee.getText());
 	
@@ -280,11 +280,11 @@ public class BankGUI extends JFrame {
 		String owner = jtfAcctOwner.getText();
 	
 		Date date = jdcDateOpened.getDate();
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(date);
-		GregorianCalendar dateOpened = new GregorianCalendar(calendar.YEAR, calendar.MONTH, calendar.DAY_OF_MONTH);
+//		Calendar calendar = Calendar.getInstance();
+//		calendar.setTime(date);
+		GregorianCalendar dateOpened = new GregorianCalendar();
 		//JCalendar dateOpened = new JCalendar(jdcDateOpened.getDate());
-		
+		dateOpened.setTime(date);
 		double balance = Double.valueOf(jtfAcctBalance.getText());
 		double minBalance = Double.valueOf(jtfMinBalance.getText());
 		double interestRate = Double.valueOf(jtfInterestRate.getText());
@@ -407,6 +407,15 @@ public class BankGUI extends JFrame {
 			
 			if(e.getSource() == jmiLoadText) {
 				tableModel.loadText();
+				acctTable.setModel(tableModel);
+			}
+			
+			if(e.getSource() == jmiSaveXML) {
+				tableModel.saveXML();
+			}
+			
+			if(e.getSource() == jmiLoadXML) {
+				tableModel.loadXML();
 				acctTable.setModel(tableModel);
 			}
 		}
