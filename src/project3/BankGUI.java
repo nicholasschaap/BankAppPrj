@@ -2,6 +2,9 @@ package project3;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import javax.swing.event.*;
@@ -114,9 +117,9 @@ public class BankGUI extends JFrame {
 		// create table
 		tableModel = new BankModel();
 		acctTable = new JTable(tableModel);
-		DateCellRenderer dcr = new DateCellRenderer();
-		acctTable.setDefaultRenderer(GregorianCalendar.class,dcr);
-        acctTable.getColumnModel().getColumn(2).setCellRenderer(dcr);
+		//DateCellRenderer dcr = new DateCellRenderer();
+		//acctTable.setDefaultRenderer(GregorianCalendar.class,dcr);
+        //acctTable.getColumnModel().getColumn(2).setCellRenderer(dcr);
 		acctTable.setMinimumSize(new Dimension(600,200));	
 		scrollPane = new JScrollPane(acctTable);
 		scrollPane.setMinimumSize(new Dimension(600, 23));
@@ -262,12 +265,20 @@ public class BankGUI extends JFrame {
 		int account = Integer.parseInt(jtfAcctNumber.getText());
 		String owner = jtfAcctOwner.getText();
 		
+		//SimpleDateFormat df = new SimpleDateFormat("MM/dd/yyyy");
+		//Date d;
+		
+		//d = df.parse(jdcDatre)
+		
 		Date date = jdcDateOpened.getDate();
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(date);
-		GregorianCalendar dateOpened = new GregorianCalendar(Calendar.YEAR, Calendar.MONTH, Calendar.DAY_OF_MONTH);
+		//Calendar calendar = Calendar.getInstance();
+		//calendar.setTime(date);
+		//GregorianCalendar dateOpened = new GregorianCalendar(Calendar.YEAR, Calendar.MONTH, Calendar.DAY_OF_MONTH);
 		//JCalendar dateOpened = new JCalendar(jdcDateOpened.getDate());
 		
+		
+		GregorianCalendar dateOpened = new GregorianCalendar();
+		dateOpened.setTime(date);
 		double balance = Double.valueOf(jtfAcctBalance.getText());
 		double monthlyFee = Double.valueOf(jtfMonthlyFee.getText());
 	
@@ -280,9 +291,10 @@ public class BankGUI extends JFrame {
 		String owner = jtfAcctOwner.getText();
 	
 		Date date = jdcDateOpened.getDate();
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(date);
-		GregorianCalendar dateOpened = new GregorianCalendar(calendar.YEAR, calendar.MONTH, calendar.DAY_OF_MONTH);
+//		Calendar calendar = Calendar.getInstance();
+//		calendar.setTime(date);
+		GregorianCalendar dateOpened = new GregorianCalendar();
+		dateOpened.setTime(date);
 		//JCalendar dateOpened = new JCalendar(jdcDateOpened.getDate());
 		
 		double balance = Double.valueOf(jtfAcctBalance.getText());
@@ -293,16 +305,16 @@ public class BankGUI extends JFrame {
 		tableModel.add(savings);
 	}
 	
-	private GregorianCalendar getDate(String str) {
-		String[] date = str.split("/");
-		
-		int year = Integer.parseInt(date[2]);
-		int month = Integer.parseInt(date[0]);
-		int day = Integer.parseInt(date[1]);
-		GregorianCalendar dateOpened = new GregorianCalendar(year,month,day);
-		
-		return dateOpened;
-	}
+//	private GregorianCalendar getDate(String str) {
+//		String[] date = str.split("/");
+//		
+//		int year = Integer.parseInt(date[2]);
+//		int month = Integer.parseInt(date[0]);
+//		int day = Integer.parseInt(date[1]);
+//		GregorianCalendar dateOpened = new GregorianCalendar(year,month,day);
+//		
+//		return dateOpened;
+//	}
 	
 	private int rowIndex() {
 		return acctTable.getSelectedRow();
@@ -426,7 +438,16 @@ public class BankGUI extends JFrame {
                     if (lsm.isSelectedIndex(i)) {
                     	jtfAcctNumber.setText(""+ acctTable.getValueAt(i,0));
                     	jtfAcctOwner.setText("" + acctTable.getValueAt(i, 1));
-                    	jdcDateOpened.setCalendar((GregorianCalendar)acctTable.getValueAt(i, 2));
+                    	SimpleDateFormat df = new SimpleDateFormat("MMM dd, yyyy");
+                    	Date date = null;
+						try {
+							date = df.parse((String) acctTable.getValueAt(i, 2));
+						} catch (ParseException e1) {
+							e1.printStackTrace();
+						}
+                    	GregorianCalendar cal = new GregorianCalendar();
+                    	cal.setTime(date);
+                    	jdcDateOpened.setCalendar(cal);
                 		jtfAcctBalance.setText("" + acctTable.getValueAt(i, 3));
                     	if (acctTable.getValueAt(i,4) == null) {
                     		jtfMonthlyFee.setText("");
