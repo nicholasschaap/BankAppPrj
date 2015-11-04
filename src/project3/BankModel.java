@@ -11,13 +11,10 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.io.Serializable;
-<<<<<<< HEAD
 import java.text.DateFormat;
-=======
 import java.io.StringWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
->>>>>>> origin/master
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.GregorianCalendar;
@@ -283,7 +280,6 @@ public class BankModel extends AbstractTableModel implements Serializable{
 		}
 		out.close();
 	}
-<<<<<<< HEAD
 	//	
 	//	public BankModel loadXML() {
 	//		
@@ -309,8 +305,7 @@ public class BankModel extends AbstractTableModel implements Serializable{
 	}
 	
 	public void sortDateOpened() {
-		
-=======
+	}
 	
 	public void saveXML() {
 
@@ -522,6 +517,5 @@ public class BankModel extends AbstractTableModel implements Serializable{
 		}
 		
 		return checking;
->>>>>>> origin/master
 	}
 }

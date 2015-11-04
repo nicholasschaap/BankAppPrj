@@ -271,7 +271,6 @@ public class BankGUI extends JFrame {
 		//d = df.parse(jdcDatre)
 		
 		Date date = jdcDateOpened.getDate();
-<<<<<<< HEAD
 		//Calendar calendar = Calendar.getInstance();
 		//calendar.setTime(date);
 		//GregorianCalendar dateOpened = new GregorianCalendar(Calendar.YEAR, Calendar.MONTH, Calendar.DAY_OF_MONTH);
@@ -279,12 +278,6 @@ public class BankGUI extends JFrame {
 		
 		
 		GregorianCalendar dateOpened = new GregorianCalendar();
-=======
-//		Calendar calendar = Calendar.getInstance();
-//		calendar.setTime(date);
-		GregorianCalendar dateOpened = new GregorianCalendar();
-		//JCalendar dateOpened = new JCalendar(jdcDateOpened.getDate());
->>>>>>> origin/master
 		dateOpened.setTime(date);
 		double balance = Double.valueOf(jtfAcctBalance.getText());
 		double monthlyFee = Double.valueOf(jtfMonthlyFee.getText());
@@ -298,14 +291,7 @@ public class BankGUI extends JFrame {
 		String owner = jtfAcctOwner.getText();
 	
 		Date date = jdcDateOpened.getDate();
-//		Calendar calendar = Calendar.getInstance();
-//		calendar.setTime(date);
 		GregorianCalendar dateOpened = new GregorianCalendar();
-<<<<<<< HEAD
-		dateOpened.setTime(date);
-=======
->>>>>>> origin/master
-		//JCalendar dateOpened = new JCalendar(jdcDateOpened.getDate());
 		dateOpened.setTime(date);
 		double balance = Double.valueOf(jtfAcctBalance.getText());
 		double minBalance = Double.valueOf(jtfMinBalance.getText());
