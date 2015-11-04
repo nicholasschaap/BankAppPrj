@@ -48,4 +48,9 @@ public class CheckingAccount extends Account {
 	public void setMonthlyFee(double monthlyFee) {
 		this.monthlyFee = monthlyFee;
 	}
+
+	@Override
+	public int compare(Account a1, Account a2) {
+		return 0;
+	}
 }

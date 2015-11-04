@@ -59,4 +59,9 @@ public class SavingsAccount extends Account {
 	public void setInterestRate(double interestRate) {
 		this.interestRate = interestRate;
 	}
+
+	@Override
+	public int compare(Account a1, Account a2) {
+		return 0;
+	}
 }

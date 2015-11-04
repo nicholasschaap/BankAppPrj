@@ -17,6 +17,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.GregorianCalendar;
 import java.util.Scanner;
 
@@ -27,12 +28,10 @@ import javax.xml.parsers.*;
 import javax.xml.transform.*;
 import javax.xml.transform.dom.*;
 import javax.xml.transform.stream.*;
+
 import org.xml.sax.*;
 import org.xml.sax.helpers.DefaultHandler;
 import org.w3c.dom.*;
-import org.w3c.dom.Attr;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 import javax.swing.table.AbstractTableModel;
 
@@ -280,31 +279,20 @@ public class BankModel extends AbstractTableModel implements Serializable{
 		}
 		out.close();
 	}
-	//	
-	//	public BankModel loadXML() {
-	//		
-	//	}
-	//	
-	//	public void saveXML() {
-	//		
-	//	}
-//	public void sortAccountNumber() {
-//		Collections.sort(accounts,new Account() {
-//
-//			@Override
-//			public int compare(Account arg0, Account arg1) {
-//				// TODO Auto-generated method stub
-//				return 0;
-//			}
-//			
-//		});
-//	}
+	
+	public void sortAccountNumber() {
+		Collections.sort(accounts, new AccountNumberComparator());
+		fireTableDataChanged();
+	}
 	
 	public void sortAccountName() {
-		
+		Collections.sort(accounts, new AccountNameComparator());
+		fireTableDataChanged();
 	}
 	
 	public void sortDateOpened() {
+		Collections.sort(accounts, new DateOpenedComparator());
+		fireTableDataChanged();
 	}
 	
 	public void saveXML() {

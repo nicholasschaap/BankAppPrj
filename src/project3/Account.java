@@ -13,7 +13,6 @@ public abstract class Account implements Serializable,Comparator<Account> {
 	private static final long serialVersionUID = 1L;
 	protected int number;
 	protected String owner;
-	//protected JCalendar dateOpened;
 	protected GregorianCalendar dateOpened;
 	protected double balance;
 	
@@ -46,8 +45,7 @@ public abstract class Account implements Serializable,Comparator<Account> {
 		Date date = dateOpened.getTime();
 		String result = number + "," + owner + "," + sdf.format(date) + 
 				"," + balance;
-//		String result = String.format("%d,%s,%tD,%f", number,owner,
-//				dateOpened,balance);
+		
 		return result;
 	}
 

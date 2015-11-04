@@ -301,17 +301,6 @@ public class BankGUI extends JFrame {
 		tableModel.add(savings);
 	}
 	
-//	private GregorianCalendar getDate(String str) {
-//		String[] date = str.split("/");
-//		
-//		int year = Integer.parseInt(date[2]);
-//		int month = Integer.parseInt(date[0]);
-//		int day = Integer.parseInt(date[1]);
-//		GregorianCalendar dateOpened = new GregorianCalendar(year,month,day);
-//		
-//		return dateOpened;
-//	}
-	
 	private int rowIndex() {
 		return acctTable.getSelectedRow();
 	}
@@ -425,6 +414,18 @@ public class BankGUI extends JFrame {
 			if(e.getSource() == jmiLoadXML) {
 				tableModel.loadXML();
 				acctTable.setModel(tableModel);
+			}
+			
+			if(e.getSource() == jmiSortByAcctNumber) {
+				tableModel.sortAccountNumber();
+			}
+			
+			if(e.getSource() == jmiSortByAcctOwner) {
+				tableModel.sortAccountName();
+			}
+			
+			if(e.getSource() == jmiSortByDateOpened) {
+				tableModel.sortDateOpened();
 			}
 		}
 	}
