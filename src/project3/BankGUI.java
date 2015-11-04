@@ -125,6 +125,8 @@ public class BankGUI extends JFrame {
 		scrollPane.setMinimumSize(new Dimension(600, 23));
 		acctTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		add(scrollPane, c);
+		acctTable.setRowSelectionAllowed(true);
+		acctTable.setColumnSelectionAllowed(false);
 		
 		TableColumn column = null;
 		for (int i = 0; i < tableModel.getColumnCount(); i++) {
