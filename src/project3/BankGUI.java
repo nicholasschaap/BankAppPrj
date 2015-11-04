@@ -307,21 +307,29 @@ public class BankGUI extends JFrame {
 		return acctTable.getSelectedRow();
 	}
 	
+	private void selectChecking() {
+		jtfMinBalance.setText("");
+		jtfInterestRate.setText("");
+		jtfInterestRate.setEnabled(false);
+		jtfMinBalance.setEnabled(false);
+		jtfMonthlyFee.setEnabled(true);
+	}
+	
+	private void selectSavings() {
+		jtfInterestRate.setEnabled(true);
+		jtfMinBalance.setEnabled(true);
+		jtfMonthlyFee.setText("");
+		jtfMonthlyFee.setEnabled(false);
+	}
+	
 	private class ButtonListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			if(e.getSource() == jrbChecking){ 
-				jtfMinBalance.setText("");
-				jtfInterestRate.setText("");
-				jtfInterestRate.setEnabled(false);
-				jtfMinBalance.setEnabled(false);
-				jtfMonthlyFee.setEnabled(true);
+				selectChecking();
 			}
 
 			if(e.getSource() == jrbSavings){
-				jtfInterestRate.setEnabled(true);
-				jtfMinBalance.setEnabled(true);
-				jtfMonthlyFee.setText("");
-				jtfMonthlyFee.setEnabled(false);
+				selectSavings();
 			}
 			
 			if(e.getSource() == jbtAdd) {
@@ -434,46 +442,50 @@ public class BankGUI extends JFrame {
 	class SharedListSelectionHandler implements ListSelectionListener {
 	    public void valueChanged(ListSelectionEvent e) {
 	    	ListSelectionModel lsm = (ListSelectionModel)e.getSource();
-	    	
-	    	if (lsm.isSelectionEmpty()) {
-	    		JOptionPane error = new JOptionPane("No accounts!");
-            } else {
-                // Find out which indexes are selected.
-                int minIndex = lsm.getMinSelectionIndex();
-                int maxIndex = lsm.getMaxSelectionIndex();
-                for (int i = minIndex; i <= maxIndex; i++) {
-                    if (lsm.isSelectedIndex(i)) {
-                    	jtfAcctNumber.setText(""+ tableModel.getValueAt(i,0));
-                    	jtfAcctOwner.setText("" + tableModel.getValueAt(i,1));
 
 
-						String date = (String) tableModel.getValueAt(i,2);
-						String[] dateSplit = date.split("/");
-						int year = Integer.parseInt(dateSplit[2]);
-						int month = Integer.parseInt(dateSplit[0]);
-						int day = Integer.parseInt(dateSplit[1]);
+	    	// Find out which indexes are selected.
+	    	int minIndex = lsm.getMinSelectionIndex();
+	    	int maxIndex = lsm.getMaxSelectionIndex();
+	    	for (int i = minIndex; i <= maxIndex; i++) {
+	    		if (lsm.isSelectedIndex(i)) {
+	    			if(tableModel.isChecking(i)) {
+	    				jrbChecking.setSelected(true);
+	    				selectChecking();
+	    			} else {
+	    				jrbSavings.setSelected(true);
+	    				selectSavings();
+	    			}
+	    			jtfAcctNumber.setText(""+ tableModel.getValueAt(i,0));
+	    			jtfAcctOwner.setText("" + tableModel.getValueAt(i,1));
 
-                    	GregorianCalendar cal = new GregorianCalendar(year, month, day);
 
-                    	jdcDateOpened.setCalendar(cal);
-                		jtfAcctBalance.setText("" + tableModel.getValueAt(i,3));
-                    	if (tableModel.getValueAt(i,4) == null) {
-                    		jtfMonthlyFee.setText("");
-                    	} else{
-                    		jtfMonthlyFee.setText("" + tableModel.getValueAt(i,4));
-                    	}
-                    	if (tableModel.getValueAt(i,5) == null) {
-                    		jtfInterestRate.setText("");
-                    	} else{
-                    		jtfInterestRate.setText("" + tableModel.getValueAt(i,5));
-                    	}
-                    	if (tableModel.getValueAt(i,6) == null) {
-                    		jtfMinBalance.setText("");
-                    	} else{
-                    		jtfMinBalance.setText("" + tableModel.getValueAt(i,6));
-                    	}
-                    }
-                }
+	    			String date = (String) tableModel.getValueAt(i,2);
+	    			String[] dateSplit = date.split("/");
+	    			int year = Integer.parseInt(dateSplit[2]);
+	    			int month = Integer.parseInt(dateSplit[0]) - 1;
+	    			int day = Integer.parseInt(dateSplit[1]);
+
+	    			GregorianCalendar cal = new GregorianCalendar(year, month, day);
+
+	    			jdcDateOpened.setCalendar(cal);
+	    			jtfAcctBalance.setText("" + tableModel.getValueAt(i,3));
+	    			if (tableModel.getValueAt(i,4) == null) {
+	    				jtfMonthlyFee.setText("");
+	    			} else{
+	    				jtfMonthlyFee.setText("" + tableModel.getValueAt(i,4));
+	    			}
+	    			if (tableModel.getValueAt(i,5) == null) {
+	    				jtfInterestRate.setText("");
+	    			} else{
+	    				jtfInterestRate.setText("" + tableModel.getValueAt(i,5));
+	    			}
+	    			if (tableModel.getValueAt(i,6) == null) {
+	    				jtfMinBalance.setText("");
+	    			} else{
+	    				jtfMinBalance.setText("" + tableModel.getValueAt(i,6));
+	    			}
+	    		}
             }
 	    }
 	}

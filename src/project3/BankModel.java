@@ -476,7 +476,7 @@ public class BankModel extends AbstractTableModel implements Serializable{
 
 	}
 	
-	private boolean isChecking(int row) {
+	public boolean isChecking(int row) {
 		boolean checking = false;
 		Account acct = accounts.get(row);
 		
