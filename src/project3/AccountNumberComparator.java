@@ -1,6 +1,6 @@
 package project3;
 
-<<<<<<< Updated upstream
+
 import java.util.Comparator;
 
 public class AccountNumberComparator implements Comparator<Account> {
@@ -13,8 +13,4 @@ public class AccountNumberComparator implements Comparator<Account> {
 			return 1;
 		return 0;
 	}
-=======
-public class AccountNumberComparator {
->>>>>>> Stashed changes
-
 }
