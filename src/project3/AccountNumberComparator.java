@@ -1,6 +1,5 @@
 package project3;
 
-
 import java.util.Comparator;
 
 public class AccountNumberComparator implements Comparator<Account> {

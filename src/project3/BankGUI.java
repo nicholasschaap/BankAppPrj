@@ -335,24 +335,23 @@ public class BankGUI extends JFrame {
 			}
 			
 			if(e.getSource() == jbtUpdate) {
-				
+
 				if(jtfAcctNumber.getText() != "") {
-						tableModel.setValueAt(jtfAcctNumber.getText(), rowIndex(), 0);
+					tableModel.setValueAt(jtfAcctNumber.getText(), rowIndex(), 0);
 				}
 				if(jtfAcctOwner.getText() != "") {
-						tableModel.setValueAt(jtfAcctOwner.getText(), rowIndex(), 1);
+					tableModel.setValueAt(jtfAcctOwner.getText(), rowIndex(), 1);
 				}
 				if(jdcDateOpened != null) {
 					Date date = jdcDateOpened.getDate();
-					Calendar calendar = Calendar.getInstance();
-					calendar.setTime(date);
-					GregorianCalendar dateOpened = new GregorianCalendar(calendar.YEAR, calendar.MONTH, calendar.DAY_OF_MONTH);
+					GregorianCalendar dateOpened = new GregorianCalendar();
+					dateOpened.setTime(date);
 					tableModel.setValueAt(dateOpened, rowIndex(), 2);
 				}
 				if(jtfAcctBalance.getText() != "") {
-						tableModel.setValueAt(jtfAcctBalance.getText(), rowIndex(), 3);
+					tableModel.setValueAt(jtfAcctBalance.getText(), rowIndex(), 3);
 				}
-					
+
 				if(savingsIsSelected()) {
 					if(jtfMinBalance.getText() != "") {
 						tableModel.setValueAt(jtfMinBalance.getText(), rowIndex(), 6);
@@ -361,14 +360,14 @@ public class BankGUI extends JFrame {
 						tableModel.setValueAt(jtfInterestRate.getText(), rowIndex(), 5);
 					}
 				}
-					
+
 				if(checkingIsSelected()) {
 					if(jtfMonthlyFee.getText() != "") {
 						tableModel.setValueAt(jtfMonthlyFee.getText(), rowIndex(), 4);
 					}
 				}
 			}
-			
+
 			if(e.getSource() == jbtClear) {
 				jtfAcctNumber.setText("");
 				jtfAcctOwner.setText("");
@@ -405,7 +404,7 @@ public class BankGUI extends JFrame {
 			}
 			
 			if(e.getSource() == jmiLoadText) {
-				tableModel.loadText();
+				tableModel = tableModel.loadText();
 				acctTable.setModel(tableModel);
 			}
 			
@@ -444,33 +443,34 @@ public class BankGUI extends JFrame {
                 int maxIndex = lsm.getMaxSelectionIndex();
                 for (int i = minIndex; i <= maxIndex; i++) {
                     if (lsm.isSelectedIndex(i)) {
-                    	jtfAcctNumber.setText(""+ acctTable.getValueAt(i,0));
-                    	jtfAcctOwner.setText("" + acctTable.getValueAt(i, 1));
-                    	SimpleDateFormat df = new SimpleDateFormat("MMM dd, yyyy");
-                    	Date date = null;
-						try {
-							date = df.parse((String) acctTable.getValueAt(i, 2));
-						} catch (ParseException e1) {
-							e1.printStackTrace();
-						}
-                    	GregorianCalendar cal = new GregorianCalendar();
-                    	cal.setTime(date);
+                    	jtfAcctNumber.setText(""+ tableModel.getValueAt(i,0));
+                    	jtfAcctOwner.setText("" + tableModel.getValueAt(i,1));
+
+
+						String date = (String) tableModel.getValueAt(i,2);
+						String[] dateSplit = date.split("/");
+						int year = Integer.parseInt(dateSplit[2]);
+						int month = Integer.parseInt(dateSplit[0]);
+						int day = Integer.parseInt(dateSplit[1]);
+
+                    	GregorianCalendar cal = new GregorianCalendar(year, month, day);
+
                     	jdcDateOpened.setCalendar(cal);
-                		jtfAcctBalance.setText("" + acctTable.getValueAt(i, 3));
-                    	if (acctTable.getValueAt(i,4) == null) {
+                		jtfAcctBalance.setText("" + tableModel.getValueAt(i,3));
+                    	if (tableModel.getValueAt(i,4) == null) {
                     		jtfMonthlyFee.setText("");
                     	} else{
-                    		jtfMonthlyFee.setText("" + acctTable.getValueAt(i, 4));
+                    		jtfMonthlyFee.setText("" + tableModel.getValueAt(i,4));
                     	}
-                    	if (acctTable.getValueAt(i,5) == null) {
+                    	if (tableModel.getValueAt(i,5) == null) {
                     		jtfInterestRate.setText("");
                     	} else{
-                    		jtfInterestRate.setText("" + acctTable.getValueAt(i, 5));
+                    		jtfInterestRate.setText("" + tableModel.getValueAt(i,5));
                     	}
-                    	if (acctTable.getValueAt(i,6) == null) {
+                    	if (tableModel.getValueAt(i,6) == null) {
                     		jtfMinBalance.setText("");
                     	} else{
-                    		jtfMinBalance.setText("" + acctTable.getValueAt(i, 6));
+                    		jtfMinBalance.setText("" + tableModel.getValueAt(i,6));
                     	}
                     }
                 }

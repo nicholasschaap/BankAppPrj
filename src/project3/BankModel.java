@@ -54,28 +54,6 @@ public class BankModel extends AbstractTableModel implements Serializable{
 		return columnNames[col];
 	}
 	
-//	@Override
-//	public Class<?> getColumnClass(int col) {
-//		switch(col) {
-//		case 0:
-//			return String.class;
-//		case 1:
-//			return String.class;
-//		case 2:
-//			return GregorianCalendar.class;
-//		case 3:
-//			return double.class;
-//		case 4:
-//			return double.class;
-//		case 5:
-//			return double.class;
-//		case 6:
-//			return double.class;
-//		default:
-//			throw new IndexOutOfBoundsException();
-//		}
-//	}
-	
 	@Override
 	public int getColumnCount() {
 		return columnNames.length; // 7
@@ -95,7 +73,8 @@ public class BankModel extends AbstractTableModel implements Serializable{
 		case 1:
 			return acct.getOwner();
 		case 2:
-			return (DateFormat.getDateInstance(DateFormat.SHORT).format(acct.getDateOpened().getTime()));
+			SimpleDateFormat df = new SimpleDateFormat("MM/dd/yyyy");
+			return df.format(acct.getDateOpened().getTime());
 		case 3:
 			return acct.getBalance();
 		case 4:
@@ -125,7 +104,7 @@ public class BankModel extends AbstractTableModel implements Serializable{
 		Account acct = accounts.get(row);
 		switch(col) {
 		case 0:
-			acct.setNumber((int)value);
+			acct.setNumber(Integer.parseInt((String) value));
 			break;
 		case 1:
 			acct.setOwner((String) value);
@@ -217,9 +196,10 @@ public class BankModel extends AbstractTableModel implements Serializable{
 
 			bankModel = new BankModel();
 
-			while(fileReader.hasNextLine() && fileReader.nextLine() != "") {
+			while(fileReader.hasNextLine()) {
 				String temp = fileReader.nextLine();
 				String[] str = temp.split(",");
+				
 				if(str.length == 7) {
 					int number = Integer.parseInt(str[0]);
 					String owner = str[1];
