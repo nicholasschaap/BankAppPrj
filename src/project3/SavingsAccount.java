@@ -1,7 +1,6 @@
 package project3;
 
 import java.util.GregorianCalendar;
-import com.toedter.calendar.JCalendar;
 
 public class SavingsAccount extends Account {
 	

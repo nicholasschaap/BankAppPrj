@@ -2,7 +2,6 @@ package project3;
 
 import java.io.Serializable;
 import java.util.GregorianCalendar;
-import com.toedter.calendar.JCalendar;
 
 public class CheckingAccount extends Account {
 	
