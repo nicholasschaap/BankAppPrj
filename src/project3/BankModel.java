@@ -504,9 +504,8 @@ public class BankModel extends AbstractTableModel implements Serializable{
 			saxParser.parse("file.xml", handler);
 
 		} catch (Exception e) {
-			//			JOptionPane optionPane = new JOptionPane();
-			//			JOptionPane.showMessageDialog(optionPane, "No such file found!", "Error!", JOptionPane.ERROR_MESSAGE);
-			e.printStackTrace();
+			JOptionPane optionPane = new JOptionPane();
+			JOptionPane.showMessageDialog(optionPane, "No such file found!", "Error!", JOptionPane.ERROR_MESSAGE);
 		}
 
 		fireTableDataChanged();
