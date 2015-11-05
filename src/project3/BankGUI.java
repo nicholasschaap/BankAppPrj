@@ -463,10 +463,11 @@ public class BankGUI extends JFrame {
 			
 			if(e.getSource() == jbtUpdate) {
 
-				if(jtfAcctNumber.getText() != "") {
+				try {
+					if(!jtfAcctNumber.getText().isEmpty()) {
 					tableModel.setValueAt(jtfAcctNumber.getText(), rowIndex(), 0);
 				}
-				if(jtfAcctOwner.getText() != "") {
+				if(!jtfAcctOwner.getText().isEmpty()) {
 					tableModel.setValueAt(jtfAcctOwner.getText(), rowIndex(), 1);
 				}
 				if(jdcDateOpened != null) {
@@ -475,23 +476,27 @@ public class BankGUI extends JFrame {
 					dateOpened.setTime(date);
 					tableModel.setValueAt(dateOpened, rowIndex(), 2);
 				}
-				if(jtfAcctBalance.getText() != "") {
+				if(!jtfAcctBalance.getText().isEmpty()) {
 					tableModel.setValueAt(jtfAcctBalance.getText(), rowIndex(), 3);
 				}
 
 				if(savingsIsSelected()) {
-					if(jtfMinBalance.getText() != "") {
+					if(!jtfMinBalance.getText().isEmpty()) {
 						tableModel.setValueAt(jtfMinBalance.getText(), rowIndex(), 6);
 					}
-					if(jtfInterestRate.getText() != "") {
+					if(!jtfInterestRate.getText().isEmpty()) {
 						tableModel.setValueAt(jtfInterestRate.getText(), rowIndex(), 5);
 					}
 				}
 
 				if(checkingIsSelected()) {
-					if(jtfMonthlyFee.getText() != "") {
+					if(!jtfMonthlyFee.getText().isEmpty()) {
 						tableModel.setValueAt(jtfMonthlyFee.getText(), rowIndex(), 4);
 					}
+				}
+				} catch(IndexOutOfBoundsException ex) {
+					JOptionPane optionPane = new JOptionPane();
+					JOptionPane.showMessageDialog(optionPane, "No Accounts!", "Error!", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 
@@ -506,7 +511,12 @@ public class BankGUI extends JFrame {
 			}
 			
 			if(e.getSource() == jbtDelete) {
-				tableModel.delete(rowIndex());
+				try{
+					tableModel.delete(rowIndex());
+				} catch(IndexOutOfBoundsException ex) {
+					JOptionPane optionPane = new JOptionPane();
+					JOptionPane.showMessageDialog(optionPane, "No accounts!", "Error!", JOptionPane.ERROR_MESSAGE);
+				}
 			}
 			
 			if(e.getSource() == jmiQuit) {

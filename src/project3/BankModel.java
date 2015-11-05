@@ -275,14 +275,6 @@ public class BankModel extends AbstractTableModel implements Serializable{
 					account = doc.createElement("Savings");
 					rootElement.appendChild(account);
 				}
-//				// set attribute to staff element
-//				Attr attr = doc.createAttribute("id");
-//				attr.setValue("1");
-//				staff.setAttributeNode(attr);
-//
-//				// shorten way
-//				// staff.setAttribute("id", "1");
-
 
 				// account number elements
 				Element accountNumber = doc.createElement("AccountNumber");
@@ -294,7 +286,7 @@ public class BankModel extends AbstractTableModel implements Serializable{
 				accountName.appendChild(doc.createTextNode("" + getValueAt(i,1)));
 				account.appendChild(accountName);
 
-//				// date opened elements
+				// date opened elements
 				Element dateOpened = doc.createElement("DateOpened");
 				dateOpened.appendChild(doc.createTextNode("" + getValueAt(i,2)));
 				account.appendChild(dateOpened);
@@ -327,9 +319,6 @@ public class BankModel extends AbstractTableModel implements Serializable{
 			Transformer transformer = transformerFactory.newTransformer();
 			DOMSource source = new DOMSource(doc);
 			StreamResult result = new StreamResult(new File("file.xml"));
-
-//			// Output to console for testing
-//			StreamResult result = new StreamResult(System.out);
 			
 			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
 			transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
@@ -349,7 +338,7 @@ public class BankModel extends AbstractTableModel implements Serializable{
 	public BankModel loadXML() {
 
 		try {
-
+			// 
 			SAXParserFactory factory = SAXParserFactory.newInstance();
 			SAXParser saxParser = factory.newSAXParser();
 
