@@ -12,61 +12,115 @@ import org.w3c.dom.*;
 import javax.swing.JOptionPane;
 import javax.swing.table.AbstractTableModel;
 
+/***********************************************************************
+Public BankModel class which determines the properties and methods 
+inherited by child classes.
+
+@author Amanda Buhr, Nicholas Schaap
+@version 1.0
+***********************************************************************/
 public class BankModel extends AbstractTableModel implements Serializable{
 	
 	private static final long serialVersionUID = 1L;
+	
+	/** ArrayList of type Account */
 	private ArrayList<Account> accounts;
+	
+	/** Array type String that stores the column names */
 	private static final String[] columnNames = {"Number","Account Owner",
-			"Date Opened","Current Balance","Monthly Fee",
-			"Interest Rate","Minimum Balance"};
+		"Date Opened","Current Balance","Monthly Fee",
+		"Interest Rate","Minimum Balance"};
 
+	/*******************************************************************
+    Constructor that initializes an ArrayList of Accounts
+    *******************************************************************/
 	public BankModel() {
 		accounts = new ArrayList<Account>();
 	}
 	
+	/*******************************************************************
+    Accessor method that gets the name of a column passed to it.
+    
+    @param col Given column
+    @return columnNames[col] Stored name of the column from the array
+    *******************************************************************/
 	@Override
 	public String getColumnName(int col) {
 		return columnNames[col];
 	}
 	
+	/*******************************************************************
+    Accessor method that gets the total number of columns stored in
+    columnNames
+    
+    @return columnNames.length Length of the array columnNames
+    *******************************************************************/
 	@Override
 	public int getColumnCount() {
 		return columnNames.length; // 7
 	}
 
+	/*******************************************************************
+    Accessor method that gets the total number of rows in the model
+    
+    @return accounts.size() Size of the array holding accounts
+    *******************************************************************/
 	@Override
 	public int getRowCount() {
 		return accounts.size();
 	}
 	
+	/*******************************************************************
+    Accessor method that gets a specific value type from an account
+    
+    @param row The index the account is stored in
+    @param col The column the information wanted is stored in
+    @return acctNum Object Account number
+    @return owner Object Account owner
+    @return acctDate Object Date account was opened
+    @return acctBal Object Balance of account
+    @return mnthlyFee Object Monthly fee of checking account
+    @return intRate Object Interest rate of savings account
+    @return minBal Object Minimum balance of savings account
+    @return "" Object that represents an empty string
+    @throw IndexOutOfBoundsException When there is not an account at 
+    	   the given row
+    *******************************************************************/
 	@Override
 	public Object getValueAt(int row, int col) {
 		Account acct = accounts.get(row);
 		switch(col) {
 		case 0:
-			return acct.getNumber();
+			int acctNum = acct.getNumber();
+			return acctNum;
 		case 1:
-			return acct.getOwner();
+			String owner = acct.getOwner();
+			return owner;
 		case 2:
 			SimpleDateFormat df = new SimpleDateFormat("MM/dd/yyyy");
-			return df.format(acct.getDateOpened().getTime());
+			String acctDate = df.format(acct.getDateOpened().getTime());
+			return acctDate;
 		case 3:
-			return acct.getBalance();
+			Double acctBal = acct.getBalance();
+			return acctBal;
 		case 4:
 			if(acct instanceof CheckingAccount) {
-				return ((CheckingAccount) acct).getMonthlyFee();
+				Double mnthlyFee = ((CheckingAccount) acct).getMonthlyFee();
+				return mnthlyFee;
 			} else {
 				return "";
 			}
 		case 5:
 			if(acct instanceof SavingsAccount) {
-				return ((SavingsAccount) acct).getInterestRate();
+				Double intRate = ((SavingsAccount) acct).getInterestRate();
+				return intRate;
 			} else {
 				return "";
 			}
 		case 6:
 			if(acct instanceof SavingsAccount) {
-				return ((SavingsAccount) acct).getMinBalance();
+				Double minBal = ((SavingsAccount) acct).getMinBalance();
+				return minBal;
 			} else {
 				return "";
 			}
@@ -75,6 +129,16 @@ public class BankModel extends AbstractTableModel implements Serializable{
 		}
 	}
 	
+	/*******************************************************************
+    Mutator method that sets a specific value type for an account and
+    updates the table
+    
+    @param value Object that will get set to an account parameter
+    @param row The index the account is stored in
+    @param col The column the information wanted is stored in
+    @throw IndexOutOfBoundsException When there is not an account at 
+    	   the given row
+    *******************************************************************/
 	public void setValueAt(Object value, int row, int col) {
 		Account acct = accounts.get(row);
 		switch(col) {
@@ -113,21 +177,34 @@ public class BankModel extends AbstractTableModel implements Serializable{
 
 	}
 	
+	/*******************************************************************
+    Mutator method that adds an account to the ArrayList and updates
+    the table
+    
+    @param a Account being added to the ArrayList
+    *******************************************************************/
 	public void add(Account a) {
 		accounts.add(a);
 		fireTableRowsInserted(accounts.indexOf(a),accounts.indexOf(a));
 	}
 	
+	/*******************************************************************
+    Mutator method that deletes an account from the ArrayList and 
+    updates the table
+    
+    @param selectedAcct Index of the account to be deleted
+    *******************************************************************/
 	public void delete(int selectedAcct) {
 		accounts.remove(selectedAcct);
 		fireTableRowsDeleted(selectedAcct, selectedAcct);
 	}
 	
-	public void update(int selectedAcct) {
-		
-		fireTableRowsUpdated(selectedAcct, selectedAcct);
-	}
-	
+	/*******************************************************************
+    Method that loads a binary file, creates a new bank model from
+    the file, and updates the table.
+    
+    @return bankModel BankModel created from loaded data
+    *******************************************************************/
 	public BankModel loadSerializable() {
 		
 		BankModel bankModel;
@@ -150,6 +227,9 @@ public class BankModel extends AbstractTableModel implements Serializable{
 		}
 	}
 	
+	/*******************************************************************
+    Method that saves a binary file from the BankModel
+    *******************************************************************/
 	public void saveSerializable() {
 		
 		ObjectOutputStream oos = null;
@@ -164,6 +244,12 @@ public class BankModel extends AbstractTableModel implements Serializable{
 		} 
 	}
 
+	/*******************************************************************
+	Method that loads a text file, creates a new BankModel after parsing 
+	the file, and updates the table.
+    
+    @return bankModel BankModel created from loaded data
+    *******************************************************************/
 	public BankModel loadText() {
 
 		BankModel bankModel;
@@ -215,6 +301,9 @@ public class BankModel extends AbstractTableModel implements Serializable{
 		}
 	}
 
+	/*******************************************************************
+	Method that saves a text file from the BankModel
+    *******************************************************************/
 	public void saveText() {
 		PrintWriter out = null;
 
@@ -233,21 +322,36 @@ public class BankModel extends AbstractTableModel implements Serializable{
 		out.close();
 	}
 	
+	/*******************************************************************
+	Method that uses a comparator to sort the accounts in the ArrayList
+	from lowest to highest by account number and updates the table
+    *******************************************************************/
 	public void sortAccountNumber() {
 		Collections.sort(accounts, new AccountNumberComparator());
 		fireTableDataChanged();
 	}
 	
+	/*******************************************************************
+	Method that uses a comparator to sort the accounts in the ArrayList 
+	alphabetically by account name and updates the table
+    *******************************************************************/
 	public void sortAccountName() {
 		Collections.sort(accounts, new AccountNameComparator());
 		fireTableDataChanged();
 	}
 	
+	/*******************************************************************
+	Method that uses a comparator to sort the accounts in the ArrayList
+	from oldest to newest by date opened and updates the table
+    *******************************************************************/
 	public void sortDateOpened() {
 		Collections.sort(accounts, new DateOpenedComparator());
 		fireTableDataChanged();
 	}
 	
+	/*******************************************************************
+    Method that saves an XML file from the BankModel
+    *******************************************************************/
 	public void saveXML() {
 		if (accounts.isEmpty()) {
 			JOptionPane optionPane = new JOptionPane();
@@ -335,6 +439,12 @@ public class BankModel extends AbstractTableModel implements Serializable{
 		  }        
 	}
 	
+	/*******************************************************************
+    Method that loads a binary file from the BankModel, creates a new 
+    BankModel after parsing the file, and updates the table.
+    
+    @return bankModel BankModel created from loaded data
+    *******************************************************************/
 	public BankModel loadXML() {
 
 		try {
@@ -500,7 +610,14 @@ public class BankModel extends AbstractTableModel implements Serializable{
 		fireTableDataChanged();
 		return this;
 	}
-	
+
+
+	/*******************************************************************
+    Method that checks to see if the account type is a checking account
+    
+    @return checking Boolean true or false if account type is a 
+    		checking account
+    *******************************************************************/
 	public boolean isChecking(int row) {
 		boolean checking = false;
 		Account acct = accounts.get(row);
