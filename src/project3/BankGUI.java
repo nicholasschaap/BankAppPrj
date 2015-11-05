@@ -144,6 +144,7 @@ public class BankGUI extends JFrame {
 		listSelectionModel = acctTable.getSelectionModel();
 		listSelectionModel.addListSelectionListener(
 				new SharedListSelectionHandler());
+		listSelectionModel.setSelectionMode(listSelectionModel.SINGLE_SELECTION);
 		
 		// create account type panel
 		acctTypePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
@@ -263,44 +264,118 @@ public class BankGUI extends JFrame {
 		return false;
 	}
 
-	private void addChecking() {
-		int account = Integer.parseInt(jtfAcctNumber.getText());
-		String owner = jtfAcctOwner.getText();
-		
-		//SimpleDateFormat df = new SimpleDateFormat("MM/dd/yyyy");
-		//Date d;
-		
-		//d = df.parse(jdcDatre)
-		
-		Date date = jdcDateOpened.getDate();
-		//Calendar calendar = Calendar.getInstance();
-		//calendar.setTime(date);
-		//GregorianCalendar dateOpened = new GregorianCalendar(Calendar.YEAR, Calendar.MONTH, Calendar.DAY_OF_MONTH);
-		//JCalendar dateOpened = new JCalendar(jdcDateOpened.getDate());
-		
-		
-		GregorianCalendar dateOpened = new GregorianCalendar();
-		dateOpened.setTime(date);
-		double balance = Double.valueOf(jtfAcctBalance.getText());
-		double monthlyFee = Double.valueOf(jtfMonthlyFee.getText());
+	private boolean isStringInt(JTextField field) {
+		if(field.getText() != null) {
+			try{
+			    Integer.parseInt(field.getText());   
+			}catch(Exception e){
+			    return false;
+			}
+		} else {
+			return false;
+		}
+		return true;
+	}
 	
-		CheckingAccount checking = new CheckingAccount(account,owner,dateOpened,balance,monthlyFee);
-		tableModel.add(checking);
+	private boolean isStringDouble(JTextField field) {
+		if(field.getText() != null) {
+			try{
+			    Double.valueOf(field.getText());   
+			}catch(Exception e){
+			    return false;
+			}
+		} else {
+			return false;
+		}
+		return true;
+	}
+	
+	private void addChecking() {
+		boolean valid = true;
+		if(jtfAcctNumber.getText().isEmpty() || !isStringInt(jtfAcctNumber)) {
+			jtfAcctNumber.setForeground(Color.RED);
+			jtfAcctNumber.setSelectedTextColor(Color.RED);
+			valid = false;
+		} if(jtfAcctOwner.getText().isEmpty() || isStringInt(jtfAcctOwner) || isStringDouble(jtfAcctOwner)) {
+			jtfAcctOwner.setForeground(Color.RED);
+			jtfAcctOwner.setSelectedTextColor(Color.RED);
+			valid = false;
+		} if(jtfAcctBalance.getText().isEmpty() || !isStringDouble(jtfAcctBalance)) {
+			jtfAcctBalance.setForeground(Color.RED);
+			jtfAcctBalance.setSelectedTextColor(Color.RED);
+			valid = false;
+		} if(jtfMonthlyFee.getText().isEmpty() || !isStringDouble(jtfMonthlyFee)) {
+			jtfMonthlyFee.setForeground(Color.RED);
+			jtfMonthlyFee.setSelectedTextColor(Color.RED);
+			valid = false;
+		} 
+			
+		if(valid) {
+			jtfAcctNumber.setSelectedTextColor(Color.BLACK);
+			jtfAcctNumber.setForeground(Color.BLACK);
+			jtfAcctOwner.setSelectedTextColor(Color.BLACK);
+			jtfAcctOwner.setForeground(Color.BLACK);
+			jtfAcctBalance.setSelectedTextColor(Color.BLACK);
+			jtfAcctBalance.setForeground(Color.BLACK);
+			jtfMonthlyFee.setSelectedTextColor(Color.BLACK);
+			jtfMonthlyFee.setForeground(Color.BLACK);
+			
+			int account = Integer.parseInt(jtfAcctNumber.getText());
+			String owner = jtfAcctOwner.getText();
+			
+			Date date = jdcDateOpened.getDate();
+			GregorianCalendar dateOpened = new GregorianCalendar();
+			dateOpened.setTime(date);
+			
+			double balance = Double.valueOf(jtfAcctBalance.getText());
+			double monthlyFee = Double.valueOf(jtfMonthlyFee.getText());
+	
+			CheckingAccount checking = new CheckingAccount(account,owner,dateOpened,balance,monthlyFee);
+			tableModel.add(checking);
+		}
 	}
 	
 	private void addSavings() {
-		int account = Integer.parseInt(jtfAcctNumber.getText());
-		String owner = jtfAcctOwner.getText();
+		boolean valid = true;
+		if(jtfAcctNumber.getText().isEmpty() || !isStringInt(jtfAcctNumber)) {
+			jtfAcctNumber.setSelectedTextColor(Color.RED);
+			valid = false;
+		} if(jtfAcctOwner.getText().isEmpty() || isStringInt(jtfAcctOwner) || isStringDouble(jtfAcctOwner)) {
+			jtfAcctOwner.setSelectedTextColor(Color.RED);
+			valid = false;
+		} if(jtfAcctBalance.getText().isEmpty() || !isStringDouble(jtfAcctBalance)) {
+			jtfAcctBalance.setSelectedTextColor(Color.RED);
+			valid = false;
+		} if(jtfMinBalance.getText().isEmpty() || !isStringDouble(jtfMinBalance)) {
+			jtfMinBalance.setSelectedTextColor(Color.RED);
+			valid = false;
+		} if(jtfInterestRate.getText().isEmpty() || !isStringDouble(jtfInterestRate)) {
+			jtfInterestRate.setSelectedTextColor(Color.RED);
+			valid = false;
+		}
+		
+		if(valid) {
+			jtfAcctNumber.setSelectedTextColor(Color.BLACK);
+			jtfAcctOwner.setSelectedTextColor(Color.BLACK);
+			jtfAcctBalance.setSelectedTextColor(Color.BLACK);
+			jtfMinBalance.setSelectedTextColor(Color.BLACK);
+			jtfInterestRate.setSelectedTextColor(Color.BLACK);
+			
+			int account = Integer.parseInt(jtfAcctNumber.getText());
+			String owner = jtfAcctOwner.getText();
 	
-		Date date = jdcDateOpened.getDate();
-		GregorianCalendar dateOpened = new GregorianCalendar();
-		dateOpened.setTime(date);
-		double balance = Double.valueOf(jtfAcctBalance.getText());
-		double minBalance = Double.valueOf(jtfMinBalance.getText());
-		double interestRate = Double.valueOf(jtfInterestRate.getText());
-	
-		SavingsAccount savings = new SavingsAccount(account,owner,dateOpened,balance,minBalance,interestRate);
-		tableModel.add(savings);
+			Date date = jdcDateOpened.getDate();
+			GregorianCalendar dateOpened = new GregorianCalendar();
+			dateOpened.setTime(date);
+			
+			double balance = Double.valueOf(jtfAcctBalance.getText());
+			double minBalance = Double.valueOf(jtfMinBalance.getText());
+			double interestRate = Double.valueOf(jtfInterestRate.getText());
+
+			SavingsAccount savings = new SavingsAccount(account,owner,dateOpened,balance,minBalance,interestRate);
+			tableModel.add(savings);
+		}
+		
 	}
 	
 	private int rowIndex() {
@@ -442,8 +517,7 @@ public class BankGUI extends JFrame {
 	class SharedListSelectionHandler implements ListSelectionListener {
 	    public void valueChanged(ListSelectionEvent e) {
 	    	ListSelectionModel lsm = (ListSelectionModel)e.getSource();
-
-
+	    	
 	    	// Find out which indexes are selected.
 	    	int minIndex = lsm.getMinSelectionIndex();
 	    	int maxIndex = lsm.getMaxSelectionIndex();
