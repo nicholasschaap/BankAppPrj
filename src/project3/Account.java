@@ -2,16 +2,16 @@ package project3;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-
-
-
-
-
-
+/*****************************************************************************
+Abstract Account class which determines the properties and methods
+inherited by child classes
+ 
+@author Amanda Buhr, Nicholas Schaap
+@version 1.0
+*****************************************************************************/
 public abstract class Account implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
