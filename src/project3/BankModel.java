@@ -1,41 +1,16 @@
 package project3;
-
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.PrintWriter;
-import java.io.Serializable;
-import java.text.DateFormat;
-import java.io.StringWriter;
-import java.text.DateFormat;
+import java.io.*;
+import java.util.*;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.GregorianCalendar;
-import java.util.Scanner;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
 import javax.xml.parsers.*;
 import javax.xml.transform.*;
 import javax.xml.transform.dom.*;
 import javax.xml.transform.stream.*;
-
 import org.xml.sax.*;
 import org.xml.sax.helpers.DefaultHandler;
 import org.w3c.dom.*;
-
+import javax.swing.JOptionPane;
 import javax.swing.table.AbstractTableModel;
-
-import com.toedter.calendar.JCalendar;
 
 public class BankModel extends AbstractTableModel implements Serializable{
 	
@@ -168,7 +143,8 @@ public class BankModel extends AbstractTableModel implements Serializable{
 			return bankModel;
 			
 		} catch(Exception e) {
-			e.printStackTrace();
+			JOptionPane optionPane = new JOptionPane();
+			JOptionPane.showMessageDialog(optionPane, "No such file type found!", "Error!", JOptionPane.ERROR_MESSAGE);
 			
 			return null;
 		}
@@ -183,7 +159,8 @@ public class BankModel extends AbstractTableModel implements Serializable{
 			oos.writeObject(this);
 			oos.close();
 		} catch (Exception e) {
-			e.printStackTrace();
+			JOptionPane optionPane = new JOptionPane();
+			JOptionPane.showMessageDialog(optionPane, "No data in the table!", "Error!", JOptionPane.ERROR_MESSAGE);
 		} 
 	}
 
@@ -232,13 +209,8 @@ public class BankModel extends AbstractTableModel implements Serializable{
 
 		// could not find file
 		catch(FileNotFoundException error) {
-			System.out.println("File not found.");
-			return null;
-		}
-
-		// problem reading the file
-		catch(IOException error) {
-			System.out.println("Oops!  Something went wrong.");
+			JOptionPane optionPane = new JOptionPane();
+			JOptionPane.showMessageDialog(optionPane, "No such file type found!", "Error!", JOptionPane.ERROR_MESSAGE);
 			return null;
 		}
 	}
@@ -251,7 +223,8 @@ public class BankModel extends AbstractTableModel implements Serializable{
 					new FileWriter("data.txt")));
 		}
 		catch (IOException e) {
-			e.printStackTrace();
+			JOptionPane optionPane = new JOptionPane();
+			JOptionPane.showMessageDialog(optionPane, "No data in table!", "Error!", JOptionPane.ERROR_MESSAGE);
 		}
 
 		for(int i = 0; i < accounts.size(); i++) {
@@ -276,7 +249,11 @@ public class BankModel extends AbstractTableModel implements Serializable{
 	}
 	
 	public void saveXML() {
-
+		if (accounts.isEmpty()) {
+			JOptionPane optionPane = new JOptionPane();
+			JOptionPane.showMessageDialog(optionPane, "No data in table!", "Error!", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
 		try {
 
 			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
@@ -361,11 +338,12 @@ public class BankModel extends AbstractTableModel implements Serializable{
 			System.out.println("File saved!");
 
 		  } catch (ParserConfigurationException pce) {
-			pce.printStackTrace();
+			  JOptionPane optionPane = new JOptionPane();
+			  JOptionPane.showMessageDialog(optionPane, "Oops something went wrong!", "Error!", JOptionPane.ERROR_MESSAGE);
 		  } catch (TransformerException tfe) {
-			tfe.printStackTrace();
-		  }
-		        
+			  JOptionPane optionPane = new JOptionPane();
+			  JOptionPane.showMessageDialog(optionPane, "Oops something went wrong!", "Error!", JOptionPane.ERROR_MESSAGE);
+		  }        
 	}
 	
 	public void loadXML() {
@@ -471,7 +449,8 @@ public class BankModel extends AbstractTableModel implements Serializable{
 			saxParser.parse("c:\\file.xml", handler);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			JOptionPane optionPane = new JOptionPane();
+			JOptionPane.showMessageDialog(optionPane, "No such file found!", "Error!", JOptionPane.ERROR_MESSAGE);
 		}
 
 	}
