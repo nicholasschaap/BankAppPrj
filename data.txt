@@ -1,2 +1,0 @@
-CheckingAccount,44004,Nick,2015,11,03,400.0,2.0
-CheckingAccount,25001,Bob,2015,11,01,600.0,1.5

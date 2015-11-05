@@ -1,41 +1,16 @@
 package project3;
-
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.PrintWriter;
-import java.io.Serializable;
-import java.text.DateFormat;
-import java.io.StringWriter;
-import java.text.DateFormat;
+import java.io.*;
+import java.util.*;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.GregorianCalendar;
-import java.util.Scanner;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
 import javax.xml.parsers.*;
 import javax.xml.transform.*;
 import javax.xml.transform.dom.*;
 import javax.xml.transform.stream.*;
-
 import org.xml.sax.*;
 import org.xml.sax.helpers.DefaultHandler;
 import org.w3c.dom.*;
-
+import javax.swing.JOptionPane;
 import javax.swing.table.AbstractTableModel;
-
-import com.toedter.calendar.JCalendar;
 
 public class BankModel extends AbstractTableModel implements Serializable{
 	
@@ -168,7 +143,8 @@ public class BankModel extends AbstractTableModel implements Serializable{
 			return bankModel;
 			
 		} catch(Exception e) {
-			e.printStackTrace();
+			JOptionPane optionPane = new JOptionPane();
+			JOptionPane.showMessageDialog(optionPane, "No such file type found!", "Error!", JOptionPane.ERROR_MESSAGE);
 			
 			return null;
 		}
@@ -183,7 +159,8 @@ public class BankModel extends AbstractTableModel implements Serializable{
 			oos.writeObject(this);
 			oos.close();
 		} catch (Exception e) {
-			e.printStackTrace();
+			JOptionPane optionPane = new JOptionPane();
+			JOptionPane.showMessageDialog(optionPane, "No data in the table!", "Error!", JOptionPane.ERROR_MESSAGE);
 		} 
 	}
 
@@ -232,13 +209,8 @@ public class BankModel extends AbstractTableModel implements Serializable{
 
 		// could not find file
 		catch(FileNotFoundException error) {
-			System.out.println("File not found.");
-			return null;
-		}
-
-		// problem reading the file
-		catch(IOException error) {
-			System.out.println("Oops!  Something went wrong.");
+			JOptionPane optionPane = new JOptionPane();
+			JOptionPane.showMessageDialog(optionPane, "No such file type found!", "Error!", JOptionPane.ERROR_MESSAGE);
 			return null;
 		}
 	}
@@ -251,7 +223,8 @@ public class BankModel extends AbstractTableModel implements Serializable{
 					new FileWriter("data.txt")));
 		}
 		catch (IOException e) {
-			e.printStackTrace();
+			JOptionPane optionPane = new JOptionPane();
+			JOptionPane.showMessageDialog(optionPane, "No data in table!", "Error!", JOptionPane.ERROR_MESSAGE);
 		}
 
 		for(int i = 0; i < accounts.size(); i++) {
@@ -276,7 +249,11 @@ public class BankModel extends AbstractTableModel implements Serializable{
 	}
 	
 	public void saveXML() {
-
+		if (accounts.isEmpty()) {
+			JOptionPane optionPane = new JOptionPane();
+			JOptionPane.showMessageDialog(optionPane, "No data in table!", "Error!", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
 		try {
 
 			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
@@ -349,7 +326,7 @@ public class BankModel extends AbstractTableModel implements Serializable{
 			TransformerFactory transformerFactory = TransformerFactory.newInstance();
 			Transformer transformer = transformerFactory.newTransformer();
 			DOMSource source = new DOMSource(doc);
-			StreamResult result = new StreamResult(new File("C:\\file.xml"));
+			StreamResult result = new StreamResult(new File("file.xml"));
 
 //			// Output to console for testing
 //			StreamResult result = new StreamResult(System.out);
@@ -361,14 +338,16 @@ public class BankModel extends AbstractTableModel implements Serializable{
 			System.out.println("File saved!");
 
 		  } catch (ParserConfigurationException pce) {
-			pce.printStackTrace();
+			  JOptionPane optionPane = new JOptionPane();
+			  JOptionPane.showMessageDialog(optionPane, "Oops something went wrong!", "Error!", JOptionPane.ERROR_MESSAGE);
 		  } catch (TransformerException tfe) {
-			tfe.printStackTrace();
-		  }
-		        
+			  JOptionPane optionPane = new JOptionPane();
+			  JOptionPane.showMessageDialog(optionPane, "Oops something went wrong!", "Error!", JOptionPane.ERROR_MESSAGE);
+		  }        
 	}
 	
-	public void loadXML() {
+	public BankModel loadXML() {
+
 		try {
 
 			SAXParserFactory factory = SAXParserFactory.newInstance();
@@ -376,104 +355,161 @@ public class BankModel extends AbstractTableModel implements Serializable{
 
 			DefaultHandler handler = new DefaultHandler() {
 
-			boolean bActNum = false;
-			boolean bActOwner = false;
-			boolean bDateOpened = false;
-			boolean bCurrentBal = false;
-			boolean bMonthlyFee = false;
-			boolean bIntRate = false;
-			boolean bMinBal = false;
+				boolean bActNum = false;
+				boolean bActOwner = false;
+				boolean bDateOpened = false;
+				boolean bCurrentBal = false;
+				boolean bMonthlyFee = false;
+				boolean bIntRate = false;
+				boolean bMinBal = false;
+				boolean checking;
+				boolean savings;
 
-			public void startElement(String uri, String localName,String qName, 
-					Attributes attributes) throws SAXException {
+				Integer iActNum = 0;
+				String actOwner = "";
+				GregorianCalendar dateOpened = new GregorianCalendar();
+				Double dCurrentBal = 0.0;
+				Double dMonthlyFee = 0.0;
+				Double dIntRate = 0.0;
+				Double dMinBal = 0.0;
 
-				System.out.println("Start Element :" + qName);
+				public void startElement(String uri, String localName,String qName, 
+						Attributes attributes) throws SAXException {
 
-				if (qName.equalsIgnoreCase("AccountNumber")) {
-					bActNum = true;
+					if(qName.equalsIgnoreCase("Checking")) {
+						checking = true;
+						savings = false;
+					}
+
+					if(qName.equalsIgnoreCase("Savings")) {
+						savings = true;
+						checking = false;
+					}
+
+					if (qName.equalsIgnoreCase("AccountNumber")) {
+						bActNum = true;
+					}
+
+					if (qName.equalsIgnoreCase("AccountOwner")) {
+						bActOwner = true;
+					}
+
+					if (qName.equalsIgnoreCase("DateOpened")) {
+						bDateOpened = true;
+					}
+
+					if (qName.equalsIgnoreCase("CurrentBalance")) {
+						bCurrentBal = true;
+					}
+
+					if (qName.equalsIgnoreCase("MonthlyFee")) {
+						bMonthlyFee = true;
+					}
+
+					if (qName.equalsIgnoreCase("AccountNumber")) {
+						bActNum = true;
+					}
+
+					if (qName.equalsIgnoreCase("AccountOwner")) {
+						bActOwner = true;
+					}
+
+					if (qName.equalsIgnoreCase("DateOpened")) {
+						bDateOpened = true;
+					}
+
+					if (qName.equalsIgnoreCase("CurrentBalance")) {
+						bCurrentBal = true;
+					}
+
+					if (qName.equalsIgnoreCase("InterestRate")) {
+						bIntRate = true;
+					}
+
+					if (qName.equalsIgnoreCase("MinimumBalance")) {
+						bMinBal = true;
+					}
+
 				}
 
-				if (qName.equalsIgnoreCase("AccountOwner")) {
-					bActOwner = true;
+				public void endElement(String uri, String localName,
+						String qName) throws SAXException {
+
+					if(qName.equalsIgnoreCase("Checking")) {
+						CheckingAccount acct = new CheckingAccount(iActNum, actOwner, dateOpened, dCurrentBal, dMonthlyFee);
+						add(acct);
+					}
+					if(qName.equalsIgnoreCase("Savings")) {
+						SavingsAccount acct = new SavingsAccount(iActNum, actOwner, dateOpened, dCurrentBal, dIntRate, dMinBal);
+						add(acct);
+					}
+
 				}
 
-				if (qName.equalsIgnoreCase("DateOpened")) {
-					bDateOpened = true;
+				public void characters(char ch[], int start, int length) throws SAXException {
+
+					if (bActNum) {
+						String actNum = new String(ch, start, length);
+						iActNum = Integer.parseInt(actNum);
+						bActNum = false;
+					}
+
+					if (bActOwner) {
+						actOwner = new String(ch, start, length);
+						bActOwner = false;
+					}
+
+					if (bDateOpened) {
+						String date = new String(ch, start, length);
+						String[] str = date.split("/");
+						int year = Integer.parseInt(str[2]);
+						int month = Integer.parseInt(str[0]);
+						int day = Integer.parseInt(str[1]);
+						dateOpened = new GregorianCalendar(year, month, day);
+						bDateOpened = false;
+					}
+
+					if (bCurrentBal) {
+						String currentBal = new String(ch, start, length);
+						dCurrentBal = Double.valueOf(currentBal);
+						bCurrentBal = false;
+					}
+
+					if(checking) {
+						if (bMonthlyFee) {
+
+							String monthlyFee = new String(ch, start, length);
+							dMonthlyFee = Double.valueOf(monthlyFee);
+							bMonthlyFee = false;
+						}
+					}
+
+					if(savings) {
+						if (bIntRate) {
+
+							String intRate = new String(ch, start, length);
+							dIntRate = Double.valueOf(intRate);
+							bIntRate = false;
+						}
+
+						if (bMinBal) {
+							String minBal = new String(ch, start, length);
+							dMinBal = Double.valueOf(minBal);
+							bMinBal = false;
+						}
+					}
 				}
-
-				if (qName.equalsIgnoreCase("CurrentBalance")) {
-					bCurrentBal = true;
-				}
-
-				if (qName.equalsIgnoreCase("MonthlyFee")) {
-					bMonthlyFee = true;
-				}
-
-				if (qName.equalsIgnoreCase("InterestRate")) {
-					bIntRate = true;
-				}
-
-				if (qName.equalsIgnoreCase("MinimumBalance")) {
-					bMinBal = true;
-				}
-
-			}
-
-			public void endElement(String uri, String localName,
-					String qName) throws SAXException {
-
-				System.out.println("End Element :" + qName);
-
-			}
-			
-			public void characters(char ch[], int start, int length) throws SAXException {
-				
-				if (bActNum) {
-					System.out.println("First Name : " + new String(ch, start, length));
-					bActNum = false;
-				}
-
-				if (bActOwner) {
-					System.out.println("Last Name : " + new String(ch, start, length));
-					bActOwner = false;
-				}
-
-				if (bDateOpened) {
-					System.out.println("Nick Name : " + new String(ch, start, length));
-					bDateOpened = false;
-				}
-
-				if (bCurrentBal) {
-					System.out.println("Salary : " + new String(ch, start, length));
-					bCurrentBal = false;
-				}
-				
-				if (bMonthlyFee) {
-					System.out.println("Salary : " + new String(ch, start, length));
-					bMonthlyFee = false;
-				}
-
-				if (bIntRate) {
-					System.out.println("Salary : " + new String(ch, start, length));
-					bIntRate = false;
-				}
-				
-				if (bMinBal) {
-					System.out.println("Salary : " + new String(ch, start, length));
-					bMinBal = false;
-				}
-
-
-			}
-
 			};
 
-			saxParser.parse("c:\\file.xml", handler);
+			saxParser.parse("file.xml", handler);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			JOptionPane optionPane = new JOptionPane();
+			JOptionPane.showMessageDialog(optionPane, "No such file found!", "Error!", JOptionPane.ERROR_MESSAGE);
 		}
 
+		fireTableDataChanged();
+		return this;
 	}
 	
 	public boolean isChecking(int row) {

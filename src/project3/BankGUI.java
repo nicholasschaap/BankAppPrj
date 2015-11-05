@@ -2,15 +2,10 @@ package project3;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
-
 import javax.swing.event.*;
 import javax.swing.*;
 import javax.swing.table.*;
-
 import com.toedter.calendar.*;
 
 public class BankGUI extends JFrame {
@@ -127,6 +122,7 @@ public class BankGUI extends JFrame {
 		add(scrollPane, c);
 		acctTable.setRowSelectionAllowed(true);
 		acctTable.setColumnSelectionAllowed(false);
+		acctTable.setSelectionBackground(Color.LIGHT_GRAY);
 		
 		TableColumn column = null;
 		for (int i = 0; i < tableModel.getColumnCount(); i++) {
@@ -144,6 +140,8 @@ public class BankGUI extends JFrame {
 		listSelectionModel = acctTable.getSelectionModel();
 		listSelectionModel.addListSelectionListener(
 				new SharedListSelectionHandler());
+		listSelectionModel.setSelectionMode(listSelectionModel.SINGLE_SELECTION);
+		
 		
 		// create account type panel
 		acctTypePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
@@ -200,6 +198,75 @@ public class BankGUI extends JFrame {
 		jlblMinBalance = new JLabel("Minimum Balance: ");
 		jtfMinBalance = new JTextField();
 		jtfMinBalance.setEnabled(false); 
+		
+
+		
+		jtfAcctNumber.addKeyListener(new KeyAdapter() {
+		    public void keyReleased(KeyEvent event) {
+
+		        if (isStringInt(jtfAcctNumber)) {
+		        	jtfAcctNumber.setForeground(Color.BLACK);
+		        } else {
+		        	jtfAcctNumber.setForeground(Color.RED);
+		        }
+		    }
+		});
+		
+		jtfAcctBalance.addKeyListener(new KeyAdapter() {
+		    public void keyReleased(KeyEvent event) {
+
+		        if (isStringDouble(jtfAcctBalance)) {
+		        	jtfAcctBalance.setForeground(Color.BLACK);
+		        } else {
+		        	jtfAcctBalance.setForeground(Color.RED);
+		        }
+		    }
+		});
+		
+		jtfAcctOwner.addKeyListener(new KeyAdapter() {
+		    public void keyReleased(KeyEvent event) {
+
+		        if (jtfAcctOwner.getText().matches(".*\\d+.*")) {
+		        	jtfAcctOwner.setForeground(Color.RED);
+		        } else {
+		        	jtfAcctOwner.setForeground(Color.BLACK);
+		        }
+		    }
+		});
+		
+		jtfMonthlyFee.addKeyListener(new KeyAdapter() {
+		    public void keyReleased(KeyEvent event) {
+
+		        if (isStringDouble(jtfMonthlyFee)) {
+		        	jtfMonthlyFee.setForeground(Color.BLACK);
+		        } else {
+		        	jtfMonthlyFee.setForeground(Color.RED);
+		        }
+		    }
+		});
+		
+		jtfInterestRate.addKeyListener(new KeyAdapter() {
+		    public void keyReleased(KeyEvent event) {
+
+		        if (isStringDouble(jtfInterestRate)) {
+		        	jtfInterestRate.setForeground(Color.BLACK);
+		        } else {
+		        	jtfInterestRate.setForeground(Color.RED);
+		        }
+		    }
+		});
+		
+		jtfMinBalance.addKeyListener(new KeyAdapter() {
+		    public void keyReleased(KeyEvent event) {
+
+		        if (isStringDouble(jtfMinBalance)) {
+		        	jtfMinBalance.setForeground(Color.BLACK);
+		        } else {
+		        	jtfMinBalance.setForeground(Color.RED);
+		        }
+		    }
+		});
+		
 		
 		//infoPanel.setLayout(new GridBagLayout());
 		c.fill = GridBagConstraints.HORIZONTAL;
@@ -265,44 +332,94 @@ public class BankGUI extends JFrame {
 		return false;
 	}
 
-	private void addChecking() {
-		int account = Integer.parseInt(jtfAcctNumber.getText());
-		String owner = jtfAcctOwner.getText();
-		
-		//SimpleDateFormat df = new SimpleDateFormat("MM/dd/yyyy");
-		//Date d;
-		
-		//d = df.parse(jdcDatre)
-		
-		Date date = jdcDateOpened.getDate();
-		//Calendar calendar = Calendar.getInstance();
-		//calendar.setTime(date);
-		//GregorianCalendar dateOpened = new GregorianCalendar(Calendar.YEAR, Calendar.MONTH, Calendar.DAY_OF_MONTH);
-		//JCalendar dateOpened = new JCalendar(jdcDateOpened.getDate());
-		
-		
-		GregorianCalendar dateOpened = new GregorianCalendar();
-		dateOpened.setTime(date);
-		double balance = Double.valueOf(jtfAcctBalance.getText());
-		double monthlyFee = Double.valueOf(jtfMonthlyFee.getText());
+	private boolean isStringInt(JTextField field) {
+		if(field.getText() != null) {
+			try{
+			    Integer.parseInt(field.getText());   
+			}catch(Exception e){
+			    return false;
+			}
+		} else {
+			return false;
+		}
+		return true;
+	}
 	
-		CheckingAccount checking = new CheckingAccount(account,owner,dateOpened,balance,monthlyFee);
-		tableModel.add(checking);
+	private boolean isStringDouble(JTextField field) {
+		if(field.getText() != null) {
+			try{
+			    Double.valueOf(field.getText());
+			}catch(Exception e){
+			    return false;
+			}
+			
+			if(field.getText().contains("d") || field.getText().contains("f")) {
+				return false;
+			}
+		} else {
+			return false;
+		}
+		return true;
+	}
+	
+	private void addChecking() {
+		boolean valid = true;
+		if(jtfAcctNumber.getText().isEmpty() || jtfAcctNumber.getForeground() == Color.RED) {
+			valid = false;
+		} if(jtfAcctOwner.getText().isEmpty() || jtfAcctOwner.getForeground() == Color.RED) {
+			valid = false;
+		} if(jtfAcctBalance.getText().isEmpty() || jtfAcctBalance.getForeground() == Color.RED) {
+			valid = false;
+		} if(jtfMonthlyFee.getText().isEmpty() || jtfMonthlyFee.getForeground() == Color.RED) {
+			valid = false;
+		} 
+			
+		if(valid) {
+			int account = Integer.parseInt(jtfAcctNumber.getText());
+			String owner = jtfAcctOwner.getText();
+			
+			Date date = jdcDateOpened.getDate();
+			GregorianCalendar dateOpened = new GregorianCalendar();
+			dateOpened.setTime(date);
+			
+			double balance = Double.valueOf(jtfAcctBalance.getText());
+			double monthlyFee = Double.valueOf(jtfMonthlyFee.getText());
+	
+			CheckingAccount checking = new CheckingAccount(account,owner,dateOpened,balance,monthlyFee);
+			tableModel.add(checking);
+		}
 	}
 	
 	private void addSavings() {
-		int account = Integer.parseInt(jtfAcctNumber.getText());
-		String owner = jtfAcctOwner.getText();
+		boolean valid = true;
+		if(jtfAcctNumber.getText().isEmpty() || jtfAcctNumber.getForeground() == Color.RED) {
+			valid = false;
+		} if(jtfAcctOwner.getText().isEmpty() || jtfAcctOwner.getForeground() == Color.RED) {
+			valid = false;
+		} if(jtfAcctBalance.getText().isEmpty() || jtfAcctBalance.getForeground() == Color.RED) {
+			valid = false;
+		} if(jtfMinBalance.getText().isEmpty() || jtfMinBalance.getForeground() == Color.RED) {
+			valid = false;
+		} if(jtfInterestRate.getText().isEmpty() || jtfInterestRate.getForeground() == Color.RED) {
+			valid = false;
+		}
+		
+		if(valid) {
+			int account = Integer.parseInt(jtfAcctNumber.getText());
+			String owner = jtfAcctOwner.getText();
 	
-		Date date = jdcDateOpened.getDate();
-		GregorianCalendar dateOpened = new GregorianCalendar();
-		dateOpened.setTime(date);
-		double balance = Double.valueOf(jtfAcctBalance.getText());
-		double minBalance = Double.valueOf(jtfMinBalance.getText());
-		double interestRate = Double.valueOf(jtfInterestRate.getText());
-	
-		SavingsAccount savings = new SavingsAccount(account,owner,dateOpened,balance,minBalance,interestRate);
-		tableModel.add(savings);
+			Date date = jdcDateOpened.getDate();
+			GregorianCalendar dateOpened = new GregorianCalendar();
+			dateOpened.setTime(date);
+			
+			double balance = Double.valueOf(jtfAcctBalance.getText());
+			double minBalance = Double.valueOf(jtfMinBalance.getText());
+			double interestRate = Double.valueOf(jtfInterestRate.getText());
+
+			SavingsAccount savings = new SavingsAccount(account,owner,dateOpened,balance,minBalance,interestRate);
+			tableModel.add(savings);
+		}
+		
 	}
 	
 	private int rowIndex() {
@@ -401,12 +518,16 @@ public class BankGUI extends JFrame {
 			}
 
 			if(e.getSource() == jmiSaveBinary) {
-				tableModel.saveSerializable();
+					tableModel.saveSerializable();
 			}
 			
 			if(e.getSource() == jmiLoadBinary) {
-				tableModel = tableModel.loadSerializable();
-				acctTable.setModel(tableModel);
+				try {
+					tableModel = tableModel.loadSerializable();
+					acctTable.setModel(tableModel);
+				} catch(IllegalArgumentException ex) {
+					return;
+				}				
 			}
 			
 			if(e.getSource() == jmiSaveText) {
@@ -414,8 +535,13 @@ public class BankGUI extends JFrame {
 			}
 			
 			if(e.getSource() == jmiLoadText) {
-				tableModel = tableModel.loadText();
-				acctTable.setModel(tableModel);
+				try {
+					tableModel = tableModel.loadText();
+					acctTable.setModel(tableModel);
+				} catch(IllegalArgumentException ex) {
+					return;
+				}	
+
 			}
 			
 			if(e.getSource() == jmiSaveXML) {
@@ -444,8 +570,7 @@ public class BankGUI extends JFrame {
 	class SharedListSelectionHandler implements ListSelectionListener {
 	    public void valueChanged(ListSelectionEvent e) {
 	    	ListSelectionModel lsm = (ListSelectionModel)e.getSource();
-
-
+	    	
 	    	// Find out which indexes are selected.
 	    	int minIndex = lsm.getMinSelectionIndex();
 	    	int maxIndex = lsm.getMaxSelectionIndex();
