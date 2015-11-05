@@ -186,6 +186,8 @@ public class BankGUI extends JFrame {
 		jlblDateOpened = new JLabel("Date Opened: ");
 		jdcDateOpened = new JDateChooser();
 		jdcDateOpened.setLocale(Locale.US);
+		JTextFieldDateEditor editor = (JTextFieldDateEditor) jdcDateOpened.getDateEditor();
+		editor.setEditable(false);
 		jlblAcctBalance = new JLabel("Account Balance: ");
 		jtfAcctBalance = new JTextField();
 		jlblMonthlyFee = new JLabel("Monthly Fee: ");
