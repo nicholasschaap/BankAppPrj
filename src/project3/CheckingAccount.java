@@ -1,14 +1,31 @@
 package project3;
 
-import java.io.Serializable;
 import java.util.GregorianCalendar;
-import com.toedter.calendar.JCalendar;
 
+/***********************************************************************
+CheckingAccount class that extends the abstract Account class and 
+inherits its properties and methods.
+
+@author Amanda Buhr, Nicholas Schaap
+@version 1.0
+***********************************************************************/
 public class CheckingAccount extends Account {
 	
 	private static final long serialVersionUID = 1L;
+	
+	/** monthly fee */
 	private double monthlyFee;
 	
+	/*******************************************************************
+    Constructs a CheckingAccount with properties set to the given 
+    parameters.
+    
+    @param number account number
+    @param owner account owner name
+    @param dateOpened date when account was opened
+    @param balance current account balance
+    @param monthlyFee monthly fee
+    *******************************************************************/
 	public CheckingAccount(int number, String owner,
 			GregorianCalendar dateOpened, double balance,
 			double monthlyFee) {
@@ -18,6 +35,15 @@ public class CheckingAccount extends Account {
 		this.setMonthlyFee(monthlyFee);
 	}
 
+	/*******************************************************************
+    Tests whether "this" CheckingAccount is equal to another 
+    CheckingAccount.
+    
+    @param other CheckingAccount which is being tested against for 
+    	   equality
+    @return boolean value representing the equality of the two checking 
+    	    accounts
+    *******************************************************************/
 	@Override
 	public boolean equals(Object other) {
 		boolean result = false;
@@ -33,6 +59,11 @@ public class CheckingAccount extends Account {
 		return result;
 	}
 	
+	/*******************************************************************
+    Converts the current CheckingAccount to a string.
+    
+    @return CheckingAccount in String format
+    *******************************************************************/
 	@Override
 	public String toString() {
 		String result = super.toString();
@@ -41,16 +72,21 @@ public class CheckingAccount extends Account {
 		return result;
 	}
 
+	/*******************************************************************
+    Gets the monthly fee.
+    
+    @return monthly fee
+    *******************************************************************/
 	public double getMonthlyFee() {
 		return monthlyFee;
 	}
 
+	/*******************************************************************
+    Sets the monthly fee.
+    
+    @param monthlyFee monthly fee
+    *******************************************************************/
 	public void setMonthlyFee(double monthlyFee) {
 		this.monthlyFee = monthlyFee;
-	}
-
-	@Override
-	public int compare(Account a1, Account a2) {
-		return 0;
 	}
 }
