@@ -60,3 +60,5 @@ $RECYCLE.BIN/
 *.classpath
 /bin/
 *.bin
+*.xml
+data.txt
