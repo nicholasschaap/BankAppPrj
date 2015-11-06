@@ -3,15 +3,21 @@ package project3;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
+
+import javax.swing.border.BevelBorder;
+import javax.swing.border.Border;
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.TitledBorder;
 import javax.swing.event.*;
 import javax.swing.*;
 import javax.swing.table.*;
+
 import com.toedter.calendar.*;
 
 public class BankGUI extends JFrame {
 
 	private static final long serialVersionUID = 1L;
-	private JPanel acctTypePanel, infoPanel, buttonPanel;
+	private JPanel acctTypePanel, infoPanel, buttonPanel, lowerPanel;
 	private JMenuBar menuBar;
 	private JMenu jmFile, jmSort;
 	private JMenuItem jmiLoadBinary, jmiSaveBinary, jmiLoadText, 
@@ -41,21 +47,14 @@ public class BankGUI extends JFrame {
 	    frame.setVisible(true);
 	}
 	
-	// constructor
+	// frame constructor
 	public BankGUI(String title) {
 		super(title);
-		setSize(1000,800);
+		setSize(800,550);
+		setMinimumSize(new Dimension(600,450));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		listener = new ButtonListener();
-		
-		setLayout(new GridBagLayout());
-		GridBagConstraints c = new GridBagConstraints();
-		c.fill = GridBagConstraints.NONE;
-		c.gridx = 0;
-		c.gridy = 0;
-		c.gridwidth = 3;
-		c.gridheight = 10;
-		
+	
 		// create menu
 		menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
@@ -111,105 +110,155 @@ public class BankGUI extends JFrame {
 		
 		// create table
 		tableModel = new BankModel();
-		acctTable = new JTable(tableModel);
-		//DateCellRenderer dcr = new DateCellRenderer();
-		//acctTable.setDefaultRenderer(GregorianCalendar.class,dcr);
-        //acctTable.getColumnModel().getColumn(2).setCellRenderer(dcr);
-		acctTable.setMinimumSize(new Dimension(600,200));	
+		acctTable = new JTable(tableModel);	
 		scrollPane = new JScrollPane(acctTable);
-		scrollPane.setMinimumSize(new Dimension(600, 23));
-		acctTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-		add(scrollPane, c);
+		scrollPane.setPreferredSize(new Dimension(800,300));
+		acctTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+		add(scrollPane);
 		acctTable.setRowSelectionAllowed(true);
 		acctTable.setColumnSelectionAllowed(false);
 		acctTable.setSelectionBackground(Color.LIGHT_GRAY);
+		Border loweredBevel = BorderFactory.createBevelBorder(
+				BevelBorder.LOWERED);
+		Border padSidesTop = BorderFactory.createEmptyBorder(
+				10,10,10,10);
+		Border tableBorder = BorderFactory.createCompoundBorder(
+				padSidesTop, loweredBevel);
+		scrollPane.setBorder(tableBorder);
+		
+		// set alignments
+		DefaultTableCellRenderer right = 
+				new DefaultTableCellRenderer();
+		right.setHorizontalAlignment(JLabel.RIGHT);
+		acctTable.getColumnModel().getColumn(3).setCellRenderer(right);
+		acctTable.getColumnModel().getColumn(4).setCellRenderer(right);
+		acctTable.getColumnModel().getColumn(5).setCellRenderer(right);
+		acctTable.getColumnModel().getColumn(6).setCellRenderer(right);
+		DefaultTableCellRenderer center = 
+				new DefaultTableCellRenderer();
+		center.setHorizontalAlignment(JLabel.CENTER);
+		acctTable.getColumnModel().getColumn(2).setCellRenderer(center);
 		
 		TableColumn column = null;
 		for (int i = 0; i < tableModel.getColumnCount(); i++) {
 		    column = acctTable.getColumnModel().getColumn(i);
-		    	if(i == 1 || i == 3)
-		    		column.setPreferredWidth(100);
-		    	else if(i == 2)
-		    		column.setPreferredWidth(90);
-		    	else if(i == 6)
-		    		column.setPreferredWidth(110);
-		    	else
+		    	if(i == 0 || i == 4 || i == 5) {
 		    		column.setPreferredWidth(80);
+		    		column.setMinWidth(60);
+				} else {
+		    		column.setPreferredWidth(100);
+		    		column.setMinWidth(70);
+				}
 		}
 		
 		listSelectionModel = acctTable.getSelectionModel();
 		listSelectionModel.addListSelectionListener(
 				new SharedListSelectionHandler());
-		listSelectionModel.setSelectionMode(listSelectionModel.SINGLE_SELECTION);
+		listSelectionModel.setSelectionMode(
+				listSelectionModel.SINGLE_SELECTION);
 		
 		
-		// create account type panel
+		// create account type panel with radio buttons
 		acctTypePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
 		jrbChecking = new JRadioButton("Checking", true);
 		jrbSavings = new JRadioButton("Savings");
 		
+		// add action listeners to radio buttons
 		jrbChecking.addActionListener(listener);
 		jrbSavings.addActionListener(listener);
 		
+		// create group for account type radio buttons
 		acctType = new ButtonGroup();
 		acctType.add(jrbChecking);
 		acctType.add(jrbSavings);
+		
+		// add radio buttons to acctTypePanel
 		acctTypePanel.add(jrbChecking); 
 		acctTypePanel.add(jrbSavings);
-		acctType = new ButtonGroup();
-		acctType.add(jrbChecking);
-		acctType.add(jrbSavings);
-		
-		// create button panel
-		buttonPanel = new JPanel(new GridLayout(4,1));
-		jbtAdd = new JButton("Add");
-		jbtDelete = new JButton("Delete");
-		jbtUpdate = new JButton("Update");
-		jbtClear = new JButton("Clear");
-		
-		jbtAdd.addActionListener(listener);
-		jbtDelete.addActionListener(listener);
-		jbtUpdate.addActionListener(listener);
-		jbtClear.addActionListener(listener);
-		
-		buttonPanel.add(jbtAdd);
-		buttonPanel.add(jbtDelete);
-		buttonPanel.add(jbtUpdate);
-		buttonPanel.add(jbtClear);
-				
+
 		// create account info panel
-		infoPanel = new JPanel();
+		infoPanel = new JPanel(new GridBagLayout());
+		Border padSidesBottom = BorderFactory.createEmptyBorder(
+				0,10,5,10);
+		infoPanel.setBorder(padSidesBottom);
+		GridBagConstraints c = new GridBagConstraints();
+
 		jlblAcctNumber = new JLabel("Account Number: ");
-		jtfAcctNumber = new JTextField();
 		jlblAcctOwner = new JLabel("Account Owner: ");
-		jtfAcctOwner = new JTextField();
 		jlblDateOpened = new JLabel("Date Opened: ");
+		jlblAcctBalance = new JLabel("Account Balance: ");
+		jlblMonthlyFee = new JLabel("Monthly Fee: ");
+		jlblInterestRate = new JLabel("Interest Rate: ");
+		jlblMinBalance = new JLabel("Minimum Balance: ");
+
+		jtfAcctNumber = new JTextField();
+		jtfAcctOwner = new JTextField();
 		jdcDateOpened = new JDateChooser();
 		jdcDateOpened.setLocale(Locale.US);
-		JTextFieldDateEditor editor = (JTextFieldDateEditor) jdcDateOpened.getDateEditor();
+		JTextFieldDateEditor editor = 
+				(JTextFieldDateEditor) jdcDateOpened.getDateEditor();
 		editor.setEditable(false);
-		jlblAcctBalance = new JLabel("Account Balance: ");
 		jtfAcctBalance = new JTextField();
-		jlblMonthlyFee = new JLabel("Monthly Fee: ");
 		jtfMonthlyFee = new JTextField();
-		jlblInterestRate = new JLabel("Interest Rate: ");
 		jtfInterestRate = new JTextField();
 		jtfInterestRate.setEnabled(false);
-		jlblMinBalance = new JLabel("Minimum Balance: ");
 		jtfMinBalance = new JTextField();
 		jtfMinBalance.setEnabled(false); 
-		
 
+		c.fill = GridBagConstraints.NONE;
+		c.gridwidth = 2;
+		c.weightx = 0;
+		c.gridx = 0;
+		c.gridy = 0;
+		infoPanel.add(acctTypePanel, c);
+		c.fill = GridBagConstraints.NONE;
+		c.anchor = GridBagConstraints.EAST;
+		c.gridwidth = 1;
+		c.gridy++;
+		c.insets = new Insets(0,100,1,5);
+		infoPanel.add(jlblAcctNumber, c);
+		c.gridy++;
+		infoPanel.add(jlblAcctOwner, c);
+		c.gridy++;
+		infoPanel.add(jlblDateOpened, c);
+		c.gridy++;
+		infoPanel.add(jlblAcctBalance, c);
+		c.gridy++;
+		infoPanel.add(jlblMonthlyFee, c);
+		c.gridy++;
+		infoPanel.add(jlblInterestRate, c);
+		c.gridy++;
+		infoPanel.add(jlblMinBalance, c);
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.anchor = GridBagConstraints.WEST;
+		c.weightx = 1.0;
+		c.gridx = 1;
+		c.gridy = 1;
+		c.insets = new Insets(0,0,1,30);
+		infoPanel.add(jtfAcctNumber, c);
+		c.gridy++;
+		infoPanel.add(jtfAcctOwner, c);
+		c.gridy++;
+		infoPanel.add(jdcDateOpened, c);
+		c.gridy++;
+		infoPanel.add(jtfAcctBalance, c);
+		c.gridy++;
+		infoPanel.add(jtfMonthlyFee, c);
+		c.gridy++;
+		infoPanel.add(jtfInterestRate, c);
+		c.gridy++;
+		infoPanel.add(jtfMinBalance, c);
 		
+		// add key listeners to text fields to check input validity
 		jtfAcctNumber.addKeyListener(new KeyAdapter() {
-		    public void keyReleased(KeyEvent event) {
+			public void keyReleased(KeyEvent event) {
 
-		        if (isStringInt(jtfAcctNumber)) {
-		        	jtfAcctNumber.setForeground(Color.BLACK);
-		        } else {
-		        	jtfAcctNumber.setForeground(Color.RED);
-		        }
-		    }
+				if (isStringInt(jtfAcctNumber)) {
+					jtfAcctNumber.setForeground(Color.BLACK);
+				} else {
+					jtfAcctNumber.setForeground(Color.RED);
+				}
+			}
 		});
 		
 		jtfAcctBalance.addKeyListener(new KeyAdapter() {
@@ -267,56 +316,49 @@ public class BankGUI extends JFrame {
 		    }
 		});
 		
+		// create button panel
+		buttonPanel = new JPanel(new GridLayout(4,1,5,14));
+		buttonPanel.setBorder(padSidesBottom);
+		jbtAdd = new JButton("Add");
+		jbtDelete = new JButton("Delete");
+		jbtUpdate = new JButton("Update");
+		jbtClear = new JButton("Clear");
+
+		jbtAdd.addActionListener(listener);
+		jbtDelete.addActionListener(listener);
+		jbtUpdate.addActionListener(listener);
+		jbtClear.addActionListener(listener);
+
+		buttonPanel.add(jbtAdd);
+		buttonPanel.add(jbtDelete);
+		buttonPanel.add(jbtUpdate);
+		buttonPanel.add(jbtClear);
 		
-		//infoPanel.setLayout(new GridBagLayout());
-		c.fill = GridBagConstraints.HORIZONTAL;
+		// create lower panel
+		lowerPanel = new JPanel(new GridBagLayout());
+		lowerPanel.setPreferredSize(new Dimension(800,220));
 		c.gridx = 0;
-		c.gridy = 10;
-		c.gridwidth = 2;
-		c.gridheight = 1;
-		add(acctTypePanel, c);
-		c.fill = GridBagConstraints.NONE;
-		c.anchor = GridBagConstraints.EAST;
-		c.gridy = 11;
-		c.gridwidth = 1;
-		add(jlblAcctNumber, c); 
-		c.gridy = 12;
-		add(jlblAcctOwner, c);
-		c.gridy = 13;
-		add(jlblDateOpened, c);
-		c.gridy = 14;
-		add(jlblAcctBalance, c);
-		c.gridy = 15;
-		add(jlblMonthlyFee, c);
-		c.gridy = 16;
-		add(jlblInterestRate, c);
-		c.gridy = 17;
-		add(jlblMinBalance, c);
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.gridx = 1;
-		c.gridy = 11;
-		add(jtfAcctNumber, c); 
-		c.gridy = 12;
-		add(jtfAcctOwner, c); 
-		c.gridy = 13;
-		add(jdcDateOpened, c); 
-		c.gridy = 14;
-		add(jtfAcctBalance, c); 
-		c.gridy = 15;
-		add(jtfMonthlyFee, c); 
-		c.gridy = 16;
-		add(jtfInterestRate, c); 
-		c.gridy = 17;
-		add(jtfMinBalance, c);
-		c.fill = GridBagConstraints.NONE;
-		c.anchor = GridBagConstraints.CENTER;
-		c.gridx = 2;
-		c.gridy = 10;
-		c.gridheight = 8;
-		add(buttonPanel, c);
-		//add(infoPanel, BorderLayout.SOUTH);
-//		setDefaultLookAndFeelDecorated(true);
+		c.gridy = 0;
+		c.weightx = 0.9;
+		c.insets = new Insets(0,0,0,0);
+		lowerPanel.add(infoPanel, c);
+		c.gridx++;
+		c.weightx = 0.1;
+		c.insets = new Insets(30,0,0,30);
+		lowerPanel.add(buttonPanel, c);
+		Border loweredEtched = BorderFactory.createEtchedBorder(
+				EtchedBorder.LOWERED);
+		TitledBorder titleBorder = BorderFactory.createTitledBorder(
+                loweredEtched, "Account Details");
+		titleBorder.setTitleJustification(TitledBorder.LEFT);
+		Border lowerBorder = BorderFactory.createCompoundBorder(
+				padSidesBottom, titleBorder);
+		lowerPanel.setBorder(lowerBorder);
+
+		// add lower panel to frame
+		add(lowerPanel, BorderLayout.SOUTH);
 	}
+	
 	
 	private boolean checkingIsSelected() {
 		if(jrbChecking.isSelected()) {
@@ -353,7 +395,8 @@ public class BankGUI extends JFrame {
 			    return false;
 			}
 			
-			if(field.getText().contains("d") || field.getText().contains("f")) {
+			if(field.getText().contains("d") || 
+					field.getText().contains("f")) {
 				return false;
 			}
 		} else {
@@ -364,13 +407,17 @@ public class BankGUI extends JFrame {
 	
 	private void addChecking() {
 		boolean valid = true;
-		if(jtfAcctNumber.getText().isEmpty() || jtfAcctNumber.getForeground() == Color.RED) {
+		if(jtfAcctNumber.getText().isEmpty() || 
+				jtfAcctNumber.getForeground() == Color.RED) {
 			valid = false;
-		} if(jtfAcctOwner.getText().isEmpty() || jtfAcctOwner.getForeground() == Color.RED) {
+		} if(jtfAcctOwner.getText().isEmpty() || 
+				jtfAcctOwner.getForeground() == Color.RED) {
 			valid = false;
-		} if(jtfAcctBalance.getText().isEmpty() || jtfAcctBalance.getForeground() == Color.RED) {
+		} if(jtfAcctBalance.getText().isEmpty() || 
+				jtfAcctBalance.getForeground() == Color.RED) {
 			valid = false;
-		} if(jtfMonthlyFee.getText().isEmpty() || jtfMonthlyFee.getForeground() == Color.RED) {
+		} if(jtfMonthlyFee.getText().isEmpty() || 
+				jtfMonthlyFee.getForeground() == Color.RED) {
 			valid = false;
 		} 
 			
@@ -385,22 +432,28 @@ public class BankGUI extends JFrame {
 			double balance = Double.valueOf(jtfAcctBalance.getText());
 			double monthlyFee = Double.valueOf(jtfMonthlyFee.getText());
 	
-			CheckingAccount checking = new CheckingAccount(account,owner,dateOpened,balance,monthlyFee);
+			CheckingAccount checking = new CheckingAccount(account,
+					owner,dateOpened,balance,monthlyFee);
 			tableModel.add(checking);
 		}
 	}
 	
 	private void addSavings() {
 		boolean valid = true;
-		if(jtfAcctNumber.getText().isEmpty() || jtfAcctNumber.getForeground() == Color.RED) {
+		if(jtfAcctNumber.getText().isEmpty() || 
+				jtfAcctNumber.getForeground() == Color.RED) {
 			valid = false;
-		} if(jtfAcctOwner.getText().isEmpty() || jtfAcctOwner.getForeground() == Color.RED) {
+		} if(jtfAcctOwner.getText().isEmpty() || 
+				jtfAcctOwner.getForeground() == Color.RED) {
 			valid = false;
-		} if(jtfAcctBalance.getText().isEmpty() || jtfAcctBalance.getForeground() == Color.RED) {
+		} if(jtfAcctBalance.getText().isEmpty() || 
+				jtfAcctBalance.getForeground() == Color.RED) {
 			valid = false;
-		} if(jtfMinBalance.getText().isEmpty() || jtfMinBalance.getForeground() == Color.RED) {
+		} if(jtfMinBalance.getText().isEmpty() || 
+				jtfMinBalance.getForeground() == Color.RED) {
 			valid = false;
-		} if(jtfInterestRate.getText().isEmpty() || jtfInterestRate.getForeground() == Color.RED) {
+		} if(jtfInterestRate.getText().isEmpty() || 
+				jtfInterestRate.getForeground() == Color.RED) {
 			valid = false;
 		}
 		
@@ -414,9 +467,11 @@ public class BankGUI extends JFrame {
 			
 			double balance = Double.valueOf(jtfAcctBalance.getText());
 			double minBalance = Double.valueOf(jtfMinBalance.getText());
-			double interestRate = Double.valueOf(jtfInterestRate.getText());
+			double interestRate = Double.valueOf(
+					jtfInterestRate.getText());
 
-			SavingsAccount savings = new SavingsAccount(account,owner,dateOpened,balance,minBalance,interestRate);
+			SavingsAccount savings = new SavingsAccount(account, owner,
+					dateOpened, balance, minBalance, interestRate);
 			tableModel.add(savings);
 		}
 		
@@ -465,38 +520,48 @@ public class BankGUI extends JFrame {
 
 				try {
 					if(!jtfAcctNumber.getText().isEmpty()) {
-					tableModel.setValueAt(jtfAcctNumber.getText(), rowIndex(), 0);
+					tableModel.setValueAt(
+							jtfAcctNumber.getText(), rowIndex(), 0);
 				}
 				if(!jtfAcctOwner.getText().isEmpty()) {
-					tableModel.setValueAt(jtfAcctOwner.getText(), rowIndex(), 1);
+					tableModel.setValueAt(
+							jtfAcctOwner.getText(), rowIndex(), 1);
 				}
 				if(jdcDateOpened != null) {
 					Date date = jdcDateOpened.getDate();
-					GregorianCalendar dateOpened = new GregorianCalendar();
+					GregorianCalendar dateOpened = 
+							new GregorianCalendar();
 					dateOpened.setTime(date);
 					tableModel.setValueAt(dateOpened, rowIndex(), 2);
 				}
 				if(!jtfAcctBalance.getText().isEmpty()) {
-					tableModel.setValueAt(jtfAcctBalance.getText(), rowIndex(), 3);
+					tableModel.setValueAt(
+							jtfAcctBalance.getText(), rowIndex(), 3);
 				}
 
 				if(savingsIsSelected()) {
 					if(!jtfMinBalance.getText().isEmpty()) {
-						tableModel.setValueAt(jtfMinBalance.getText(), rowIndex(), 6);
+						tableModel.setValueAt(
+								jtfMinBalance.getText(), rowIndex(), 6);
 					}
 					if(!jtfInterestRate.getText().isEmpty()) {
-						tableModel.setValueAt(jtfInterestRate.getText(), rowIndex(), 5);
+						tableModel.setValueAt(
+								jtfInterestRate.getText(), 
+								rowIndex(), 5);
 					}
 				}
 
 				if(checkingIsSelected()) {
 					if(!jtfMonthlyFee.getText().isEmpty()) {
-						tableModel.setValueAt(jtfMonthlyFee.getText(), rowIndex(), 4);
+						tableModel.setValueAt(jtfMonthlyFee.getText(), 
+								rowIndex(), 4);
 					}
 				}
 				} catch(IndexOutOfBoundsException ex) {
 					JOptionPane optionPane = new JOptionPane();
-					JOptionPane.showMessageDialog(optionPane, "No Accounts!", "Error!", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(optionPane, 
+							"No Accounts!", "Error!", 
+							JOptionPane.ERROR_MESSAGE);
 				}
 			}
 
@@ -515,7 +580,9 @@ public class BankGUI extends JFrame {
 					tableModel.delete(rowIndex());
 				} catch(IndexOutOfBoundsException ex) {
 					JOptionPane optionPane = new JOptionPane();
-					JOptionPane.showMessageDialog(optionPane, "No accounts!", "Error!", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(optionPane, 
+							"No accounts!", "Error!", 
+							JOptionPane.ERROR_MESSAGE);
 				}
 			}
 			
@@ -593,8 +660,10 @@ public class BankGUI extends JFrame {
 	    				jrbSavings.setSelected(true);
 	    				selectSavings();
 	    			}
-	    			jtfAcctNumber.setText(""+ tableModel.getValueAt(i,0));
-	    			jtfAcctOwner.setText("" + tableModel.getValueAt(i,1));
+	    			jtfAcctNumber.setText(
+	    					""+ tableModel.getValueAt(i,0));
+	    			jtfAcctOwner.setText(
+	    					"" + tableModel.getValueAt(i,1));
 
 
 	    			String date = (String) tableModel.getValueAt(i,2);
@@ -603,24 +672,29 @@ public class BankGUI extends JFrame {
 	    			int month = Integer.parseInt(dateSplit[0]) - 1;
 	    			int day = Integer.parseInt(dateSplit[1]);
 
-	    			GregorianCalendar cal = new GregorianCalendar(year, month, day);
+	    			GregorianCalendar cal = new GregorianCalendar(
+	    					year, month, day);
 
 	    			jdcDateOpened.setCalendar(cal);
-	    			jtfAcctBalance.setText("" + tableModel.getValueAt(i,3));
+	    			jtfAcctBalance.setText(
+	    					"" + tableModel.getValueAt(i,3));
 	    			if (tableModel.getValueAt(i,4) == null) {
 	    				jtfMonthlyFee.setText("");
 	    			} else{
-	    				jtfMonthlyFee.setText("" + tableModel.getValueAt(i,4));
+	    				jtfMonthlyFee.setText(
+	    						"" + tableModel.getValueAt(i,4));
 	    			}
 	    			if (tableModel.getValueAt(i,5) == null) {
 	    				jtfInterestRate.setText("");
 	    			} else{
-	    				jtfInterestRate.setText("" + tableModel.getValueAt(i,5));
+	    				jtfInterestRate.setText(
+	    						"" + tableModel.getValueAt(i,5));
 	    			}
 	    			if (tableModel.getValueAt(i,6) == null) {
 	    				jtfMinBalance.setText("");
 	    			} else{
-	    				jtfMinBalance.setText("" + tableModel.getValueAt(i,6));
+	    				jtfMinBalance.setText(
+	    						"" + tableModel.getValueAt(i,6));
 	    			}
 	    		}
             }
