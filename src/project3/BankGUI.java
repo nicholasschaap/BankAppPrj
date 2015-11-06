@@ -584,7 +584,7 @@ public class BankGUI extends JFrame {
 				catch(NullPointerException ex) {
 					JOptionPane optionPane = new JOptionPane();
 					JOptionPane.showMessageDialog(optionPane, 
-							"No Accounts!", "Error!", 
+							"No account selected!", "Error!", 
 							JOptionPane.ERROR_MESSAGE);
 				}
 			}
@@ -605,7 +605,7 @@ public class BankGUI extends JFrame {
 				} catch(Exception ex) {
 					JOptionPane optionPane = new JOptionPane();
 					JOptionPane.showMessageDialog(optionPane, 
-							"No accounts!", "Error!", 
+							"No account selected!", "Error!", 
 							JOptionPane.ERROR_MESSAGE);
 				}
 			}
