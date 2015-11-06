@@ -1,14 +1,18 @@
 package project3;
 import java.io.*;
 import java.util.*;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+
 import javax.xml.parsers.*;
 import javax.xml.transform.*;
 import javax.xml.transform.dom.*;
 import javax.xml.transform.stream.*;
+
 import org.xml.sax.*;
 import org.xml.sax.helpers.DefaultHandler;
 import org.w3c.dom.*;
+
 import javax.swing.JOptionPane;
 import javax.swing.table.AbstractTableModel;
 
@@ -89,6 +93,7 @@ public class BankModel extends AbstractTableModel implements Serializable{
 	@Override
 	public Object getValueAt(int row, int col) {
 		Account acct = accounts.get(row);
+		DecimalFormat df = new DecimalFormat("0.00");
 		switch(col) {
 		case 0:
 			int acctNum = acct.getNumber();
@@ -97,30 +102,31 @@ public class BankModel extends AbstractTableModel implements Serializable{
 			String owner = acct.getOwner();
 			return owner;
 		case 2:
-			SimpleDateFormat df = new SimpleDateFormat("MM/dd/yyyy");
-			String acctDate = df.format(acct.getDateOpened().getTime());
+			SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
+			String acctDate = sdf.format(acct.getDateOpened().getTime());
 			return acctDate;
 		case 3:
 			Double acctBal = acct.getBalance();
-			return acctBal;
+			return df.format(acctBal);
 		case 4:
 			if(acct instanceof CheckingAccount) {
-				Double mnthlyFee = ((CheckingAccount) acct).getMonthlyFee();
-				return mnthlyFee;
+				Double monthlyFee = ((CheckingAccount) acct).getMonthlyFee();
+				return df.format(monthlyFee);
 			} else {
 				return "";
 			}
 		case 5:
 			if(acct instanceof SavingsAccount) {
-				Double intRate = ((SavingsAccount) acct).getInterestRate();
-				return intRate;
+				Double intRate = 
+						((SavingsAccount) acct).getInterestRate();
+				return df.format(intRate);
 			} else {
 				return "";
 			}
 		case 6:
 			if(acct instanceof SavingsAccount) {
 				Double minBal = ((SavingsAccount) acct).getMinBalance();
-				return minBal;
+				return df.format(minBal);
 			} else {
 				return "";
 			}
