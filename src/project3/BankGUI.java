@@ -413,6 +413,8 @@ public class BankGUI extends JFrame {
 		} if(jtfAcctOwner.getText().isEmpty() || 
 				jtfAcctOwner.getForeground() == Color.RED) {
 			valid = false;
+		} if(jdcDateOpened == null) {
+			valid = false;
 		} if(jtfAcctBalance.getText().isEmpty() || 
 				jtfAcctBalance.getForeground() == Color.RED) {
 			valid = false;
@@ -422,19 +424,29 @@ public class BankGUI extends JFrame {
 		} 
 			
 		if(valid) {
-			int account = Integer.parseInt(jtfAcctNumber.getText());
-			String owner = jtfAcctOwner.getText();
 			
-			Date date = jdcDateOpened.getDate();
-			GregorianCalendar dateOpened = new GregorianCalendar();
-			dateOpened.setTime(date);
+			try {
+				int account = Integer.parseInt(jtfAcctNumber.getText());
+				String owner = jtfAcctOwner.getText();
+				Date date = jdcDateOpened.getDate();
+				GregorianCalendar dateOpened = new GregorianCalendar();
+				dateOpened.setTime(date);
+				double balance = Double.valueOf(
+						jtfAcctBalance.getText());
+				double monthlyFee = Double.valueOf(
+						jtfMonthlyFee.getText());
+		
+				CheckingAccount checking = new CheckingAccount(account,
+						owner,dateOpened,balance,monthlyFee);
+				tableModel.add(checking);
+			}
+			catch(NullPointerException ex) {
+				JOptionPane optionPane = new JOptionPane();
+				JOptionPane.showMessageDialog(optionPane, 
+						"No Date Chosen!", "Error!", 
+						JOptionPane.ERROR_MESSAGE);
+			}
 			
-			double balance = Double.valueOf(jtfAcctBalance.getText());
-			double monthlyFee = Double.valueOf(jtfMonthlyFee.getText());
-	
-			CheckingAccount checking = new CheckingAccount(account,
-					owner,dateOpened,balance,monthlyFee);
-			tableModel.add(checking);
 		}
 	}
 	
@@ -520,44 +532,56 @@ public class BankGUI extends JFrame {
 
 				try {
 					if(!jtfAcctNumber.getText().isEmpty()) {
-					tableModel.setValueAt(
-							jtfAcctNumber.getText(), rowIndex(), 0);
-				}
-				if(!jtfAcctOwner.getText().isEmpty()) {
-					tableModel.setValueAt(
-							jtfAcctOwner.getText(), rowIndex(), 1);
-				}
-				if(jdcDateOpened != null) {
-					Date date = jdcDateOpened.getDate();
-					GregorianCalendar dateOpened = 
-							new GregorianCalendar();
-					dateOpened.setTime(date);
-					tableModel.setValueAt(dateOpened, rowIndex(), 2);
-				}
-				if(!jtfAcctBalance.getText().isEmpty()) {
-					tableModel.setValueAt(
-							jtfAcctBalance.getText(), rowIndex(), 3);
-				}
-
-				if(savingsIsSelected()) {
-					if(!jtfMinBalance.getText().isEmpty()) {
 						tableModel.setValueAt(
-								jtfMinBalance.getText(), rowIndex(), 6);
+								jtfAcctNumber.getText(), rowIndex(), 0);
 					}
-					if(!jtfInterestRate.getText().isEmpty()) {
+					if(!jtfAcctOwner.getText().isEmpty()) {
 						tableModel.setValueAt(
-								jtfInterestRate.getText(), 
-								rowIndex(), 5);
+								jtfAcctOwner.getText(), 
+								rowIndex(), 1);
 					}
-				}
+					if(jdcDateOpened != null) {
+						Date date = jdcDateOpened.getDate();
+						GregorianCalendar dateOpened = 
+								new GregorianCalendar();
+						dateOpened.setTime(date);
+						tableModel.setValueAt(dateOpened, 
+								rowIndex(), 2);
+					}
+					if(!jtfAcctBalance.getText().isEmpty()) {
+						tableModel.setValueAt(
+								jtfAcctBalance.getText(), 
+								rowIndex(), 3);
+					}
 
-				if(checkingIsSelected()) {
-					if(!jtfMonthlyFee.getText().isEmpty()) {
-						tableModel.setValueAt(jtfMonthlyFee.getText(), 
-								rowIndex(), 4);
+					if(savingsIsSelected()) {
+						if(!jtfMinBalance.getText().isEmpty()) {
+							tableModel.setValueAt(
+									jtfMinBalance.getText(), 
+									rowIndex(), 6);
+						}
+						if(!jtfInterestRate.getText().isEmpty()) {
+							tableModel.setValueAt(
+									jtfInterestRate.getText(), 
+									rowIndex(), 5);
+						}
 					}
+
+					if(checkingIsSelected()) {
+						if(!jtfMonthlyFee.getText().isEmpty()) {
+							tableModel.setValueAt(
+									jtfMonthlyFee.getText(), 
+									rowIndex(), 4);
+						}
+					}
+				} 
+				catch(IndexOutOfBoundsException ex) {
+					JOptionPane optionPane = new JOptionPane();
+					JOptionPane.showMessageDialog(optionPane, 
+							"No Accounts!", "Error!", 
+							JOptionPane.ERROR_MESSAGE);
 				}
-				} catch(IndexOutOfBoundsException ex) {
+				catch(NullPointerException ex) {
 					JOptionPane optionPane = new JOptionPane();
 					JOptionPane.showMessageDialog(optionPane, 
 							"No Accounts!", "Error!", 
