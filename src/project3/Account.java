@@ -74,8 +74,8 @@ public abstract class Account implements Serializable {
 	public String toString() {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy,MM,dd");
 		Date date = dateOpened.getTime();
-		String result = number + "," + owner + "," + sdf.format(date) + 
-				"," + balance;
+		String result = number + "," + owner.replace(",","") + "," + 
+				sdf.format(date) + "," + balance;
 		
 		return result;
 	}

@@ -117,7 +117,8 @@ public class BankGUI extends JFrame {
 		add(scrollPane);
 		acctTable.setRowSelectionAllowed(true);
 		acctTable.setColumnSelectionAllowed(false);
-		acctTable.setSelectionBackground(Color.LIGHT_GRAY);
+		// makes table selection pretty
+		acctTable.setSelectionBackground(new Color(236,192,250));
 		Border loweredBevel = BorderFactory.createBevelBorder(
 				BevelBorder.LOWERED);
 		Border padSidesTop = BorderFactory.createEmptyBorder(
@@ -374,6 +375,12 @@ public class BankGUI extends JFrame {
 		return false;
 	}
 
+	private boolean isNegative(JTextField field) {
+		if(Double.valueOf(field.getText()) < 0)
+			return true;
+		return false;
+	}
+	
 	private boolean isStringInt(JTextField field) {
 		if(field.getText() != null) {
 			try{
@@ -394,7 +401,6 @@ public class BankGUI extends JFrame {
 			}catch(Exception e){
 			    return false;
 			}
-			
 			if(field.getText().contains("d") || 
 					field.getText().contains("f")) {
 				return false;
@@ -407,20 +413,46 @@ public class BankGUI extends JFrame {
 	
 	private void addChecking() {
 		boolean valid = true;
+		JOptionPane optionPane = new JOptionPane();
 		if(jtfAcctNumber.getText().isEmpty() || 
 				jtfAcctNumber.getForeground() == Color.RED) {
 			valid = false;
-		} if(jtfAcctOwner.getText().isEmpty() || 
+		} else if(isNegative(jtfAcctNumber)) {
+			valid = false;
+			JOptionPane.showMessageDialog(optionPane, 
+					"Account Number cannot be negative!", "Error!", 
+					JOptionPane.ERROR_MESSAGE);
+		} else {
+			for(int i = 0; i < tableModel.getRowCount(); i++) {
+				if(Integer.parseInt(jtfAcctNumber.getText()) == 
+						(int) acctTable.getValueAt(i, 0)) {
+					valid = false;
+					JOptionPane.showMessageDialog(optionPane, 
+							"Account Number already exists!", "Error!", 
+							JOptionPane.ERROR_MESSAGE);
+				}
+			}
+		} if(jtfAcctOwner.getText().isEmpty() ||
 				jtfAcctOwner.getForeground() == Color.RED) {
 			valid = false;
-		} if(jdcDateOpened == null) {
+		} else if(jdcDateOpened == null) {
 			valid = false;
 		} if(jtfAcctBalance.getText().isEmpty() || 
 				jtfAcctBalance.getForeground() == Color.RED) {
 			valid = false;
+		} else if(isNegative(jtfAcctBalance)) {
+			valid = false;
+			JOptionPane.showMessageDialog(optionPane, 
+					"Account Balance cannot be negative!", "Error!", 
+					JOptionPane.ERROR_MESSAGE);
 		} if(jtfMonthlyFee.getText().isEmpty() || 
 				jtfMonthlyFee.getForeground() == Color.RED) {
 			valid = false;
+		} else if(isNegative(jtfMonthlyFee)) {
+			valid = false;
+			JOptionPane.showMessageDialog(optionPane, 
+					"Monthly Fee cannot be negative!", "Error!", 
+					JOptionPane.ERROR_MESSAGE);
 		} 
 			
 		if(valid) {
@@ -441,32 +473,68 @@ public class BankGUI extends JFrame {
 				tableModel.add(checking);
 			}
 			catch(NullPointerException ex) {
-				JOptionPane optionPane = new JOptionPane();
 				JOptionPane.showMessageDialog(optionPane, 
 						"No Date Chosen!", "Error!", 
 						JOptionPane.ERROR_MESSAGE);
 			}
-			
 		}
 	}
 	
 	private void addSavings() {
 		boolean valid = true;
+		JOptionPane optionPane = new JOptionPane();
 		if(jtfAcctNumber.getText().isEmpty() || 
 				jtfAcctNumber.getForeground() == Color.RED) {
 			valid = false;
+		} else if(isNegative(jtfAcctNumber)) {
+			valid = false;
+			JOptionPane.showMessageDialog(optionPane, 
+					"Account Number cannot be negative!", "Error!", 
+					JOptionPane.ERROR_MESSAGE);
+		} else {
+			for(int i = 0; i < tableModel.getRowCount(); i++) {
+				if(Integer.parseInt(jtfAcctNumber.getText()) == 
+						(int) acctTable.getValueAt(i, 0)) {
+					valid = false;
+					JOptionPane.showMessageDialog(optionPane, 
+							"Account Number already exists!", "Error!", 
+							JOptionPane.ERROR_MESSAGE);
+				}
+			}
 		} if(jtfAcctOwner.getText().isEmpty() || 
 				jtfAcctOwner.getForeground() == Color.RED) {
 			valid = false;
-		} if(jtfAcctBalance.getText().isEmpty() || 
-				jtfAcctBalance.getForeground() == Color.RED) {
+		} if(jtfAcctBalance.getForeground() == Color.RED) {
 			valid = false;
-		} if(jtfMinBalance.getText().isEmpty() || 
-				jtfMinBalance.getForeground() == Color.RED) {
+		} else if(isNegative(jtfAcctBalance)) {
 			valid = false;
+			JOptionPane.showMessageDialog(optionPane, 
+					"Account Balance cannot be negative!", "Error!", 
+					JOptionPane.ERROR_MESSAGE);
+		} if(jtfMinBalance.getForeground() == Color.RED) {
+			valid = false;
+		} else if(isNegative(jtfMinBalance)) {
+			valid = false;
+			JOptionPane.showMessageDialog(optionPane, 
+					"Minimum Balance cannot be negative!", "Error!", 
+					JOptionPane.ERROR_MESSAGE);
 		} if(jtfInterestRate.getText().isEmpty() || 
 				jtfInterestRate.getForeground() == Color.RED) {
 			valid = false;
+		} else if(isNegative(jtfInterestRate)) {
+			valid = false;
+			JOptionPane.showMessageDialog(optionPane, 
+					"Interest Rate cannot be negative!", "Error!", 
+					JOptionPane.ERROR_MESSAGE);
+		} if(jtfAcctBalance.getText().isEmpty() || 
+				jtfMinBalance.getText().isEmpty()) {
+			valid = false;
+		} else if(Integer.parseInt(jtfAcctBalance.getText().trim()) < 
+				Integer.parseInt(jtfMinBalance.getText().trim())) {
+			valid = false;
+			JOptionPane.showMessageDialog(optionPane, 
+					"Current Balance cannot be less than the Minimum "
+					+ "Balance!", "Error!", JOptionPane.ERROR_MESSAGE);
 		}
 		
 		if(valid) {
@@ -578,7 +646,7 @@ public class BankGUI extends JFrame {
 				catch(IndexOutOfBoundsException ex) {
 					JOptionPane optionPane = new JOptionPane();
 					JOptionPane.showMessageDialog(optionPane, 
-							"No Accounts!", "Error!", 
+							"No Account Selected!", "Error!", 
 							JOptionPane.ERROR_MESSAGE);
 				}
 				catch(NullPointerException ex) {
@@ -605,7 +673,7 @@ public class BankGUI extends JFrame {
 				} catch(IndexOutOfBoundsException ex) {
 					JOptionPane optionPane = new JOptionPane();
 					JOptionPane.showMessageDialog(optionPane, 
-							"No accounts!", "Error!", 
+							"No Account Selected!", "Error!", 
 							JOptionPane.ERROR_MESSAGE);
 				}
 			}
@@ -619,7 +687,12 @@ public class BankGUI extends JFrame {
 			}
 
 			if(e.getSource() == jmiSaveBinary) {
+				try {
 					tableModel.saveSerializable();
+				} catch(NullPointerException ex) {
+					return;
+				}
+				
 			}
 			
 			if(e.getSource() == jmiLoadBinary) {

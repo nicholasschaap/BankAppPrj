@@ -23,7 +23,8 @@ inherited by child classes.
 @author Amanda Buhr, Nicholas Schaap
 @version 1.0
 ***********************************************************************/
-public class BankModel extends AbstractTableModel implements Serializable{
+public class BankModel extends AbstractTableModel 
+		implements Serializable{
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -31,8 +32,8 @@ public class BankModel extends AbstractTableModel implements Serializable{
 	private ArrayList<Account> accounts;
 	
 	/** Array type String that stores the column names */
-	private static final String[] columnNames = {"Number","Account Owner",
-		"Date Opened","Current Balance","Monthly Fee",
+	private static final String[] columnNames = {"Number",
+		"Account Owner","Date Opened","Current Balance","Monthly Fee",
 		"Interest Rate","Minimum Balance"};
 
 	/*******************************************************************
@@ -94,23 +95,27 @@ public class BankModel extends AbstractTableModel implements Serializable{
 	public Object getValueAt(int row, int col) {
 		Account acct = accounts.get(row);
 		DecimalFormat df = new DecimalFormat("0.00");
+		
+		// checks which column and gets appropriate data
 		switch(col) {
 		case 0:
 			int acctNum = acct.getNumber();
 			return acctNum;
 		case 1:
-			String owner = acct.getOwner();
+			String owner = acct.getOwner().trim();
 			return owner;
 		case 2:
 			SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
-			String acctDate = sdf.format(acct.getDateOpened().getTime());
+			String acctDate = sdf.format(
+					acct.getDateOpened().getTime());
 			return acctDate;
 		case 3:
 			Double acctBal = acct.getBalance();
 			return df.format(acctBal);
 		case 4:
 			if(acct instanceof CheckingAccount) {
-				Double monthlyFee = ((CheckingAccount) acct).getMonthlyFee();
+				Double monthlyFee = 
+						((CheckingAccount) acct).getMonthlyFee();
 				return df.format(monthlyFee);
 			} else {
 				return "";
@@ -147,6 +152,8 @@ public class BankModel extends AbstractTableModel implements Serializable{
     *******************************************************************/
 	public void setValueAt(Object value, int row, int col) {
 		Account acct = accounts.get(row);
+		
+		// checks which column and sets appropriate data
 		switch(col) {
 		case 0:
 			acct.setNumber(Integer.parseInt((String) value));
@@ -162,23 +169,27 @@ public class BankModel extends AbstractTableModel implements Serializable{
 			break;
 		case 4:
 			if(acct instanceof CheckingAccount) {
-				((CheckingAccount)acct).setMonthlyFee(Double.valueOf((String)value));
+				((CheckingAccount)acct).setMonthlyFee(
+						Double.valueOf((String)value));
 			}
 			break;
 		case 5:
 			if(acct instanceof SavingsAccount) {
-				((SavingsAccount) acct).setInterestRate(Double.valueOf((String)value));
+				((SavingsAccount) acct).setInterestRate(
+						Double.valueOf((String)value));
 			}
 			break;
 		case 6:
 			if(acct instanceof SavingsAccount) {
-				((SavingsAccount) acct).setMinBalance(Double.valueOf((String)value));
+				((SavingsAccount) acct).setMinBalance(
+						Double.valueOf((String)value));
 			}
 			break;
 		default:
 			throw new IndexOutOfBoundsException();
 		}
-
+		
+		// tells table to update specific entry
 		fireTableCellUpdated(row,col);
 
 	}
@@ -191,6 +202,8 @@ public class BankModel extends AbstractTableModel implements Serializable{
     *******************************************************************/
 	public void add(Account a) {
 		accounts.add(a);
+		
+		// tells table which row to update
 		fireTableRowsInserted(accounts.indexOf(a),accounts.indexOf(a));
 	}
 	
@@ -202,6 +215,8 @@ public class BankModel extends AbstractTableModel implements Serializable{
     *******************************************************************/
 	public void delete(int selectedAcct) {
 		accounts.remove(selectedAcct);
+		
+		// tells table to update specific account
 		fireTableRowsDeleted(selectedAcct, selectedAcct);
 	}
 	
@@ -216,6 +231,7 @@ public class BankModel extends AbstractTableModel implements Serializable{
 		BankModel bankModel;
 		ObjectInputStream ois;
 		
+		// tries to load file, add to BankModel, and update table
 		try {
 			FileInputStream file = new FileInputStream("data.bin");
 			ois = new ObjectInputStream(file);
@@ -225,11 +241,15 @@ public class BankModel extends AbstractTableModel implements Serializable{
 			
 			return bankModel;
 			
-		} catch(Exception e) {
+		} 
+		// catches exception and displays error message
+		catch(Exception e) {
 			JOptionPane optionPane = new JOptionPane();
-			JOptionPane.showMessageDialog(optionPane, "No such file type found!", "Error!", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(optionPane, 
+					"No such file type found!", "Error!", 
+					JOptionPane.ERROR_MESSAGE);
 			
-			return null;
+			return this;
 		}
 	}
 	
@@ -240,13 +260,19 @@ public class BankModel extends AbstractTableModel implements Serializable{
 		
 		ObjectOutputStream oos = null;
 		
+		// tries to save data from table
 		try {
-			oos = new ObjectOutputStream(new FileOutputStream("data.bin"));
+			oos = new ObjectOutputStream(new FileOutputStream(
+					"data.bin"));
 			oos.writeObject(this);
 			oos.close();
-		} catch (Exception e) {
+		} 
+		// catches exception and displays error message
+		catch (Exception e) {
 			JOptionPane optionPane = new JOptionPane();
-			JOptionPane.showMessageDialog(optionPane, "No data in the table!", "Error!", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(optionPane, 
+					"No data in the table!", "Error!", 
+					JOptionPane.ERROR_MESSAGE);
 		} 
 	}
 
@@ -259,7 +285,8 @@ public class BankModel extends AbstractTableModel implements Serializable{
 	public BankModel loadText() {
 
 		BankModel bankModel;
-
+		
+		// tries to load file, add to BankModel, and updates table
 		try {
 			Scanner fileReader = new Scanner(new File("data.txt"));
 
@@ -269,28 +296,37 @@ public class BankModel extends AbstractTableModel implements Serializable{
 				String temp = fileReader.nextLine();
 				String[] str = temp.split(",");
 				
+				// parses checking account (7 pieces of info)
 				if(str.length == 7) {
 					int number = Integer.parseInt(str[0]);
 					String owner = str[1];
 					int year = Integer.parseInt(str[2]);
 					int month = Integer.parseInt(str[3]);
 					int day = Integer.parseInt(str[4]);
-					GregorianCalendar dateOpened = new GregorianCalendar(year, month, day);
+					GregorianCalendar dateOpened = 
+							new GregorianCalendar(year, month, day);
 					double balance = Double.parseDouble(str[5]);
 					double monthlyFee = Double.parseDouble(str[6]);
-					CheckingAccount checking = new CheckingAccount(number, owner, dateOpened, balance, monthlyFee);
+					CheckingAccount checking = new CheckingAccount(
+							number, owner, dateOpened, balance, 
+							monthlyFee);
 					bankModel.add(checking);
-				} else if(str.length == 8) {
+				} 
+				// else parses savings account (8 pieces of info)
+				else if(str.length == 8) {
 					int number = Integer.parseInt(str[0]);
 					String owner = str[1];
 					int year = Integer.parseInt(str[2]);
 					int month = Integer.parseInt(str[3]);
 					int day = Integer.parseInt(str[4]);
-					GregorianCalendar dateOpened = new GregorianCalendar(year, month, day);
+					GregorianCalendar dateOpened = 
+							new GregorianCalendar(year, month, day);
 					double balance = Double.parseDouble(str[5]);
 					double interestRate = Double.parseDouble(str[6]);
 					double minBalance = Double.parseDouble(str[7]);
-					SavingsAccount savings = new SavingsAccount(number, owner, dateOpened, balance, interestRate, minBalance);
+					SavingsAccount savings = new SavingsAccount(
+							number, owner, dateOpened, balance, 
+							interestRate, minBalance);
 					bankModel.add(savings);
 				}
 			}
@@ -299,11 +335,13 @@ public class BankModel extends AbstractTableModel implements Serializable{
 			return bankModel;
 		}
 
-		// could not find file
+		// could not find file type
 		catch(FileNotFoundException error) {
 			JOptionPane optionPane = new JOptionPane();
-			JOptionPane.showMessageDialog(optionPane, "No such file type found!", "Error!", JOptionPane.ERROR_MESSAGE);
-			return null;
+			JOptionPane.showMessageDialog(optionPane, 
+					"No such file type found!", "Error!", 
+					JOptionPane.ERROR_MESSAGE);
+			return this;
 		}
 	}
 
@@ -312,16 +350,20 @@ public class BankModel extends AbstractTableModel implements Serializable{
     *******************************************************************/
 	public void saveText() {
 		PrintWriter out = null;
-
+		
+		// tries to save data from BankModel to .txt file
 		try {
 			out = new PrintWriter(new BufferedWriter(
 					new FileWriter("data.txt")));
 		}
 		catch (IOException e) {
 			JOptionPane optionPane = new JOptionPane();
-			JOptionPane.showMessageDialog(optionPane, "No data in table!", "Error!", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(optionPane, 
+					"No data in table!", "Error!", 
+					JOptionPane.ERROR_MESSAGE);
 		}
-
+		
+		// writes account information
 		for(int i = 0; i < accounts.size(); i++) {
 			out.println(accounts.get(i).toString());
 		}
@@ -359,14 +401,21 @@ public class BankModel extends AbstractTableModel implements Serializable{
     Method that saves an XML file from the BankModel
     *******************************************************************/
 	public void saveXML() {
+		
+		// if BankModel has no accounts, displays error, leaves method
 		if (accounts.isEmpty()) {
 			JOptionPane optionPane = new JOptionPane();
-			JOptionPane.showMessageDialog(optionPane, "No data in table!", "Error!", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(optionPane, 
+					"No data in table!", "Error!", 
+					JOptionPane.ERROR_MESSAGE);
 			return;
 		}
+		
+		// tries to make an xml document from data
 		try {
 
-			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilderFactory docFactory = 
+					DocumentBuilderFactory.newInstance();
 			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
 
 			// root elements
@@ -375,73 +424,100 @@ public class BankModel extends AbstractTableModel implements Serializable{
 			doc.appendChild(rootElement);
 			Element account;
 			
+			// iterates through ArrayList
 			for(int i = 0; i < accounts.size(); i++) {
+				// if checking account, creates root element
 				if(isChecking(i)) {
 					// type account elements
 					account = doc.createElement("Checking");
 					rootElement.appendChild(account);
-				} else {
+				} 
+				// else if savings account, creates root element
+				else {
 					// type account elements
 					account = doc.createElement("Savings");
 					rootElement.appendChild(account);
 				}
 
 				// account number elements
-				Element accountNumber = doc.createElement("AccountNumber");
-				accountNumber.appendChild(doc.createTextNode("" + getValueAt(i,0)));
+				Element accountNumber = 
+						doc.createElement("AccountNumber");
+				accountNumber.appendChild(doc.createTextNode(
+						"" + getValueAt(i,0)));
 				account.appendChild(accountNumber);
 
-				// account name elements
+				// account owner elements
 				Element accountName = doc.createElement("AccountOwner");
-				accountName.appendChild(doc.createTextNode("" + getValueAt(i,1)));
+				accountName.appendChild(doc.createTextNode(
+						"" + getValueAt(i,1)));
 				account.appendChild(accountName);
 
 				// date opened elements
 				Element dateOpened = doc.createElement("DateOpened");
-				dateOpened.appendChild(doc.createTextNode("" + getValueAt(i,2)));
+				dateOpened.appendChild(doc.createTextNode(
+						"" + getValueAt(i,2)));
 				account.appendChild(dateOpened);
 
 				// current balance elements
 				Element currentBal = doc.createElement("CurrentBalance");
-				currentBal.appendChild(doc.createTextNode("" + getValueAt(i,3)));
+				currentBal.appendChild(doc.createTextNode(
+						"" + getValueAt(i,3)));
 				account.appendChild(currentBal);
 				
+				// only appendChild if type checking account
 				if(isChecking(i)) {
 					// monthly fee elements
-					Element monthlyFee = doc.createElement("MonthlyFee");
-					monthlyFee.appendChild(doc.createTextNode("" + getValueAt(i,4)));
+					Element monthlyFee = 
+							doc.createElement("MonthlyFee");
+					monthlyFee.appendChild(doc.createTextNode(
+							"" + getValueAt(i,4)));
 					account.appendChild(monthlyFee);
-				} else {
+				} 
+				// only appendChild if type savings account
+				else {
 					// interest rate elements
 					Element intRate = doc.createElement("InterstRate");
-					intRate.appendChild(doc.createTextNode("" + getValueAt(i,5)));
+					intRate.appendChild(doc.createTextNode(
+							"" + getValueAt(i,5)));
 					account.appendChild(intRate);
 					
 					// minimum balance elements
-					Element minBal = doc.createElement("MinimumBalance");
-					minBal.appendChild(doc.createTextNode("" + getValueAt(i,6)));
+					Element minBal = 
+							doc.createElement("MinimumBalance");
+					minBal.appendChild(doc.createTextNode(
+							"" + getValueAt(i,6)));
 					account.appendChild(minBal);
 				}
 			}
 
 			// write the content into xml file
-			TransformerFactory transformerFactory = TransformerFactory.newInstance();
-			Transformer transformer = transformerFactory.newTransformer();
+			TransformerFactory transformerFactory = 
+					TransformerFactory.newInstance();
+			Transformer transformer = 
+					transformerFactory.newTransformer();
 			DOMSource source = new DOMSource(doc);
-			StreamResult result = new StreamResult(new File("file.xml"));
+			StreamResult result = 
+					new StreamResult(new File("file.xml"));
 			
 			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-			transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+			transformer.setOutputProperty(
+					"{http://xml.apache.org/xslt}indent-amount", "2");
 			transformer.transform(source, result);
 
 			System.out.println("File saved!");
 
-		  } catch (ParserConfigurationException pce) {
+		  } 
+			// for both, catches Exception and displays error message
+			catch (ParserConfigurationException pce) {
 			  JOptionPane optionPane = new JOptionPane();
-			  JOptionPane.showMessageDialog(optionPane, "Oops something went wrong!", "Error!", JOptionPane.ERROR_MESSAGE);
+			  JOptionPane.showMessageDialog(optionPane, 
+					  "Oops something went wrong!", "Error!", 
+					  JOptionPane.ERROR_MESSAGE);
 		  } catch (TransformerException tfe) {
 			  JOptionPane optionPane = new JOptionPane();
-			  JOptionPane.showMessageDialog(optionPane, "Oops something went wrong!", "Error!", JOptionPane.ERROR_MESSAGE);
+			  JOptionPane.showMessageDialog(optionPane, 
+					  "Oops something went wrong!", "Error!", 
+					  JOptionPane.ERROR_MESSAGE);
 		  }        
 	}
 	
@@ -453,6 +529,7 @@ public class BankModel extends AbstractTableModel implements Serializable{
     *******************************************************************/
 	public BankModel loadXML() {
 
+		// tries to readXML file, add to BankModel, and update table
 		try {
 			// 
 			SAXParserFactory factory = SAXParserFactory.newInstance();
@@ -460,6 +537,7 @@ public class BankModel extends AbstractTableModel implements Serializable{
 
 			DefaultHandler handler = new DefaultHandler() {
 
+				// local variables to help switch through elements
 				boolean bActNum = false;
 				boolean bActOwner = false;
 				boolean bDateOpened = false;
@@ -478,8 +556,18 @@ public class BankModel extends AbstractTableModel implements Serializable{
 				Double dIntRate = 0.0;
 				Double dMinBal = 0.0;
 
-				public void startElement(String uri, String localName,String qName, 
-						Attributes attributes) throws SAXException {
+				/*******************************************************
+				 Method that checks if the start element matches
+				 different data types for account.
+
+				 @param uri
+				 @param localName
+				 @param qName String name of element
+				 @param attributes
+				 ******************************************************/
+				public void startElement(String uri, String localName,
+						String qName, Attributes attributes) 
+								throws SAXException {
 
 					if(qName.equalsIgnoreCase("Checking")) {
 						checking = true;
@@ -537,22 +625,50 @@ public class BankModel extends AbstractTableModel implements Serializable{
 
 				}
 
+				/*******************************************************
+				 Method that checks if the end element matches
+				 different data types for account.
+
+				 @param uri
+				 @param localName
+				 @param qName String name of element
+				 @param attributes
+				 ******************************************************/
 				public void endElement(String uri, String localName,
 						String qName) throws SAXException {
 
+					// if end element is checking, creates checking
+					// account with data gathered from child elements
 					if(qName.equalsIgnoreCase("Checking")) {
-						CheckingAccount acct = new CheckingAccount(iActNum, actOwner, dateOpened, dCurrentBal, dMonthlyFee);
+						CheckingAccount acct = new CheckingAccount(
+								iActNum, actOwner, dateOpened, 
+								dCurrentBal, dMonthlyFee);
 						add(acct);
 					}
+
+					// if end element is savings, creates savings
+					// account with data gathered from child elements
 					if(qName.equalsIgnoreCase("Savings")) {
-						SavingsAccount acct = new SavingsAccount(iActNum, actOwner, dateOpened, dCurrentBal, dIntRate, dMinBal);
+						SavingsAccount acct = new SavingsAccount(
+								iActNum, actOwner, dateOpened, 
+								dCurrentBal, dIntRate, dMinBal);
 						add(acct);
 					}
 
 				}
 
-				public void characters(char ch[], int start, int length) throws SAXException {
+				/*******************************************************
+				 Method that takes the characters from child elements
+				 to create a string.
 
+				 @param ch[] array of characters from child element
+				 @param start int starting place
+				 @param length int ending place 
+				 @throws SAXException 
+				 ******************************************************/
+				public void characters(char ch[], int start, int length) 
+						throws SAXException {
+					// if child elements are true, create a string
 					if (bActNum) {
 						String actNum = new String(ch, start, length);
 						iActNum = Integer.parseInt(actNum);
@@ -570,35 +686,42 @@ public class BankModel extends AbstractTableModel implements Serializable{
 						int year = Integer.parseInt(str[2]);
 						int month = Integer.parseInt(str[0]);
 						int day = Integer.parseInt(str[1]);
-						dateOpened = new GregorianCalendar(year, month, day);
+						dateOpened = new GregorianCalendar(year, month, 
+								day);
 						bDateOpened = false;
 					}
 
 					if (bCurrentBal) {
-						String currentBal = new String(ch, start, length);
+						String currentBal = 
+								new String(ch, start, length);
 						dCurrentBal = Double.valueOf(currentBal);
 						bCurrentBal = false;
 					}
 
+					// only check these elements if checking is true
 					if(checking) {
 						if (bMonthlyFee) {
 
-							String monthlyFee = new String(ch, start, length);
+							String monthlyFee = 
+									new String(ch, start, length);
 							dMonthlyFee = Double.valueOf(monthlyFee);
 							bMonthlyFee = false;
 						}
 					}
 
+					// only check these elements if savings is true
 					if(savings) {
 						if (bIntRate) {
 
-							String intRate = new String(ch, start, length);
+							String intRate = 
+									new String(ch, start, length);
 							dIntRate = Double.valueOf(intRate);
 							bIntRate = false;
 						}
 
 						if (bMinBal) {
-							String minBal = new String(ch, start, length);
+							String minBal = 
+									new String(ch, start, length);
 							dMinBal = Double.valueOf(minBal);
 							bMinBal = false;
 						}
@@ -606,13 +729,19 @@ public class BankModel extends AbstractTableModel implements Serializable{
 				}
 			};
 
+			// parse given xml file
 			saxParser.parse("file.xml", handler);
 
-		} catch (Exception e) {
+		} 
+		// catches exceptions and displays error message
+		catch (Exception e) {
 			JOptionPane optionPane = new JOptionPane();
-			JOptionPane.showMessageDialog(optionPane, "No such file found!", "Error!", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(optionPane, 
+					"No such file found!", "Error!", 
+					JOptionPane.ERROR_MESSAGE);
 		}
 
+		// update table
 		fireTableDataChanged();
 		return this;
 	}
@@ -628,6 +757,8 @@ public class BankModel extends AbstractTableModel implements Serializable{
 		boolean checking = false;
 		Account acct = accounts.get(row);
 		
+		// if instance of CheckingAccount return true, else assume not 
+		// checking account (false)
 		if (acct instanceof CheckingAccount) {
 			checking = true;
 		}
