@@ -470,7 +470,7 @@ public class BankGUI extends JFrame {
 				if(!jtfAcctOwner.getText().isEmpty()) {
 					tableModel.setValueAt(jtfAcctOwner.getText(), rowIndex(), 1);
 				}
-				if(jdcDateOpened != null) {
+				if(jdcDateOpened.isValid()) {
 					Date date = jdcDateOpened.getDate();
 					GregorianCalendar dateOpened = new GregorianCalendar();
 					dateOpened.setTime(date);
@@ -494,9 +494,9 @@ public class BankGUI extends JFrame {
 						tableModel.setValueAt(jtfMonthlyFee.getText(), rowIndex(), 4);
 					}
 				}
-				} catch(IndexOutOfBoundsException ex) {
+				} catch(Exception ex) {
 					JOptionPane optionPane = new JOptionPane();
-					JOptionPane.showMessageDialog(optionPane, "No Accounts!", "Error!", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(optionPane, "No account selected!", "Error!", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 
@@ -513,9 +513,9 @@ public class BankGUI extends JFrame {
 			if(e.getSource() == jbtDelete) {
 				try{
 					tableModel.delete(rowIndex());
-				} catch(IndexOutOfBoundsException ex) {
+				} catch(Exception ex) {
 					JOptionPane optionPane = new JOptionPane();
-					JOptionPane.showMessageDialog(optionPane, "No accounts!", "Error!", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(optionPane, "No account selected!", "Error!", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 			
@@ -528,51 +528,91 @@ public class BankGUI extends JFrame {
 			}
 
 			if(e.getSource() == jmiSaveBinary) {
-					tableModel.saveSerializable();
+					try {
+						tableModel.saveSerializable();
+					} catch(Exception ex) {
+						tableModel = null;
+						JOptionPane optionPane = new JOptionPane();
+						JOptionPane.showMessageDialog(optionPane, "No data in the table!", "Error!", JOptionPane.ERROR_MESSAGE);
+					}
 			}
 			
 			if(e.getSource() == jmiLoadBinary) {
 				try {
-					tableModel = tableModel.loadSerializable();
+					tableModel.loadSerializable();
 					acctTable.setModel(tableModel);
-				} catch(IllegalArgumentException ex) {
+				} catch(Exception ex) {
 					return;
 				}				
 			}
 			
 			if(e.getSource() == jmiSaveText) {
-				tableModel.saveText();
+				try {
+					tableModel.saveText();
+				} catch(Exception ex) {
+					tableModel = null;
+					JOptionPane optionPane = new JOptionPane();
+					JOptionPane.showMessageDialog(optionPane, "No data in the table!", "Error!", JOptionPane.ERROR_MESSAGE);
+				}
 			}
 			
 			if(e.getSource() == jmiLoadText) {
 				try {
-					tableModel = tableModel.loadText();
+					tableModel.loadText();
 					acctTable.setModel(tableModel);
-				} catch(IllegalArgumentException ex) {
+				} catch(Exception ex) {
 					return;
 				}	
 
 			}
 			
 			if(e.getSource() == jmiSaveXML) {
-				tableModel.saveXML();
+				try {
+					tableModel.saveXML();
+				} catch(Exception ex) {
+					tableModel = null;
+					JOptionPane optionPane = new JOptionPane();
+					JOptionPane.showMessageDialog(optionPane, "No data in the table!", "Error!", JOptionPane.ERROR_MESSAGE);
+				}
 			}
 			
 			if(e.getSource() == jmiLoadXML) {
-				tableModel.loadXML();
-				acctTable.setModel(tableModel);
+				try {
+					tableModel.loadXML();
+					acctTable.setModel(tableModel);
+				} catch(Exception ex) {
+					tableModel = null;
+					JOptionPane optionPane = new JOptionPane();
+					JOptionPane.showMessageDialog(optionPane, "No such file type found!", "Error!", JOptionPane.ERROR_MESSAGE);
+				}
+				
 			}
 			
 			if(e.getSource() == jmiSortByAcctNumber) {
-				tableModel.sortAccountNumber();
+				try {
+					tableModel.sortAccountNumber();
+				} catch(Exception ex) {
+					JOptionPane optionPane = new JOptionPane();
+					JOptionPane.showMessageDialog(optionPane, "No accounts!", "Error!", JOptionPane.ERROR_MESSAGE);
+				}
 			}
 			
 			if(e.getSource() == jmiSortByAcctOwner) {
-				tableModel.sortAccountName();
+				try {
+					tableModel.sortAccountName();
+				} catch(Exception ex) {
+					JOptionPane optionPane = new JOptionPane();
+					JOptionPane.showMessageDialog(optionPane, "No accounts!", "Error!", JOptionPane.ERROR_MESSAGE);
+				}
 			}
 			
 			if(e.getSource() == jmiSortByDateOpened) {
-				tableModel.sortDateOpened();
+				try {
+					tableModel.sortDateOpened();
+				} catch(Exception ex) {
+					JOptionPane optionPane = new JOptionPane();
+					JOptionPane.showMessageDialog(optionPane, "No accounts!", "Error!", JOptionPane.ERROR_MESSAGE);
+				}
 			}
 		}
 	}

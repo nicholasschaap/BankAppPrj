@@ -206,11 +206,10 @@ public class BankModel extends AbstractTableModel implements Serializable{
     @return bankModel BankModel created from loaded data
     *******************************************************************/
 	public BankModel loadSerializable() {
-		
-		BankModel bankModel;
-		ObjectInputStream ois;
-		
 		try {
+			BankModel bankModel;
+			ObjectInputStream ois;
+			
 			FileInputStream file = new FileInputStream("data.bin");
 			ois = new ObjectInputStream(file);
 			bankModel = (BankModel) ois.readObject();
@@ -222,7 +221,6 @@ public class BankModel extends AbstractTableModel implements Serializable{
 		} catch(Exception e) {
 			JOptionPane optionPane = new JOptionPane();
 			JOptionPane.showMessageDialog(optionPane, "No such file type found!", "Error!", JOptionPane.ERROR_MESSAGE);
-			
 			return null;
 		}
 	}
@@ -233,6 +231,11 @@ public class BankModel extends AbstractTableModel implements Serializable{
 	public void saveSerializable() {
 		
 		ObjectOutputStream oos = null;
+		if(accounts.isEmpty()) {
+			JOptionPane optionPane = new JOptionPane();
+			JOptionPane.showMessageDialog(optionPane, "No data in the table!", "Error!", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
 		
 		try {
 			oos = new ObjectOutputStream(new FileOutputStream("data.bin"));
@@ -240,7 +243,7 @@ public class BankModel extends AbstractTableModel implements Serializable{
 			oos.close();
 		} catch (Exception e) {
 			JOptionPane optionPane = new JOptionPane();
-			JOptionPane.showMessageDialog(optionPane, "No data in the table!", "Error!", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(optionPane, "Oops something went wrong!", "Error!", JOptionPane.ERROR_MESSAGE);
 		} 
 	}
 
@@ -253,11 +256,11 @@ public class BankModel extends AbstractTableModel implements Serializable{
 	public BankModel loadText() {
 
 		BankModel bankModel;
+		Scanner fileReader;
 
 		try {
-			Scanner fileReader = new Scanner(new File("data.txt"));
-
 			bankModel = new BankModel();
+			fileReader = new Scanner(new File("data.txt"));
 
 			while(fileReader.hasNextLine()) {
 				String temp = fileReader.nextLine();
@@ -294,7 +297,7 @@ public class BankModel extends AbstractTableModel implements Serializable{
 		}
 
 		// could not find file
-		catch(FileNotFoundException error) {
+		catch(Exception error) {
 			JOptionPane optionPane = new JOptionPane();
 			JOptionPane.showMessageDialog(optionPane, "No such file type found!", "Error!", JOptionPane.ERROR_MESSAGE);
 			return null;
@@ -306,47 +309,67 @@ public class BankModel extends AbstractTableModel implements Serializable{
     *******************************************************************/
 	public void saveText() {
 		PrintWriter out = null;
-
-		try {
-			out = new PrintWriter(new BufferedWriter(
-					new FileWriter("data.txt")));
-		}
-		catch (IOException e) {
+		
+		if(accounts.isEmpty()) {
 			JOptionPane optionPane = new JOptionPane();
 			JOptionPane.showMessageDialog(optionPane, "No data in table!", "Error!", JOptionPane.ERROR_MESSAGE);
+		} else {
+			try {
+				out = new PrintWriter(new BufferedWriter(
+					new FileWriter("data.txt")));
+				for(int i = 0; i < accounts.size(); i++) {
+					out.println(accounts.get(i).toString());
+				}
+			}
+			catch (Exception e) {
+				JOptionPane optionPane = new JOptionPane();
+				JOptionPane.showMessageDialog(optionPane, "No data in table!", "Error!", JOptionPane.ERROR_MESSAGE);
+			}
+		
+			out.close();
 		}
-
-		for(int i = 0; i < accounts.size(); i++) {
-			out.println(accounts.get(i).toString());
-		}
-		out.close();
 	}
 	
 	/*******************************************************************
 	Method that uses a comparator to sort the accounts in the ArrayList
 	from lowest to highest by account number and updates the table
+	 * @throws Exception 
     *******************************************************************/
-	public void sortAccountNumber() {
-		Collections.sort(accounts, new AccountNumberComparator());
-		fireTableDataChanged();
+	public void sortAccountNumber() throws Exception {
+		if(!accounts.isEmpty()) {
+			Collections.sort(accounts, new AccountNumberComparator());
+			fireTableDataChanged();
+		} else {
+			throw new Exception();
+		}
 	}
 	
 	/*******************************************************************
 	Method that uses a comparator to sort the accounts in the ArrayList 
 	alphabetically by account name and updates the table
+	@throws Exception
     *******************************************************************/
-	public void sortAccountName() {
-		Collections.sort(accounts, new AccountNameComparator());
-		fireTableDataChanged();
+	public void sortAccountName() throws Exception {
+		if(!accounts.isEmpty()) {	
+			Collections.sort(accounts, new AccountNameComparator());
+			fireTableDataChanged();
+		} else {
+			throw new Exception();
+		}
 	}
 	
 	/*******************************************************************
 	Method that uses a comparator to sort the accounts in the ArrayList
 	from oldest to newest by date opened and updates the table
+	@throws Exception
     *******************************************************************/
-	public void sortDateOpened() {
-		Collections.sort(accounts, new DateOpenedComparator());
-		fireTableDataChanged();
+	public void sortDateOpened() throws Exception {
+		if(!accounts.isEmpty()) {
+			Collections.sort(accounts, new DateOpenedComparator());
+			fireTableDataChanged();
+		} else {
+			throw new Exception();
+		}
 	}
 	
 	/*******************************************************************
@@ -615,8 +638,8 @@ public class BankModel extends AbstractTableModel implements Serializable{
 	/*******************************************************************
     Method that checks to see if the account type is a checking account
     
-    @return checking Boolean true or false if account type is a 
-    		checking account
+    @return checking Boolean true or false depending on if account type
+    		is a checking account
     *******************************************************************/
 	public boolean isChecking(int row) {
 		boolean checking = false;
